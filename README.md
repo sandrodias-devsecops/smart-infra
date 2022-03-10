@@ -8,13 +8,8 @@ Com uma abordagem prática, objetiva e dividida em pequenas partes (que juntas c
 ### 📋 Os Pré-requisitos
 
 ***Soft Skills***
-
-```
 Curiosidade, Resiliência, Criatividade e Persistência são algumas softskills necessárias para a implantação prática desse projeto principalmente em um cenário real.
-```
-***Hard Skills***
 
-```
+***Hard Skills***
 Conhecimento mínimo sobre administração de sistemas linux a princípio baseados em Debian
-```
 
