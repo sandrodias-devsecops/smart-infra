@@ -8,10 +8,10 @@
 clear
 echo ""
 echo ""
-echo ""
-echo "     * * *                  S M A R T  -  I N F R A                  * * *     "
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "                                                        ...preparando ambiente!"
+
+echo "     - - -                  S M A R T  -  I N F R A                  - - -"
+echo "     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "                                                   ...preparando ambiente!"
 echo ""
 echo ""
 echo "     --=> Trocando a senha de root"
@@ -20,11 +20,13 @@ sudo passwd root
 clear
 echo ""
 echo ""
+
+
+echo "     - - -                  S M A R T  -  I N F R A                  - - -"
+
+echo "     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+echo "                                                   ...preparando ambiente!"
 echo ""
-echo "     * * *                  S M A R T  -  I N F R A                  * * *     "
-echo "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
-echo "                                                        ...preparando ambiente!"
 echo ""
-echo ""
-echo "     --=> Trocando a senha de root          --OK!--"
+echo "     --=> Trocando a senha de root          --OK--"
 echo ""
