@@ -8,7 +8,6 @@
 clear
 echo ""
 echo ""
-
 echo "     - - -                  S M A R T  -  I N F R A                  - - -"
 echo "     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "                                                   ...preparando ambiente!"
@@ -20,10 +19,7 @@ sudo passwd root
 clear
 echo ""
 echo ""
-
-
 echo "     - - -                  S M A R T  -  I N F R A                  - - -"
-
 echo "     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
 echo "                                                   ...preparando ambiente!"
 echo ""
