@@ -13,7 +13,9 @@
 #
 # ################### INFORMAÇÕES DA REDE ####################
 # Captura a quantidade de interfaces de rede detectadas
+
 qtd_interfaces=$(ip -brief token | wc -l)
+
 lista_interfaces=$(ip -brief token | awk '/token/ { print $4 }')
 #
 # Nome das interfaces de rede detectadas com reserva de até 8 interfaces
@@ -39,8 +41,11 @@ ip_dns=$(systemd-resolve --status | grep "Current DNS Server:" | sed "s/ Current
 # Captura o IP Externo 
 ip_externo=$(dig @ns1-1.akamaitech.net ANY whoami.akamai.net +short)
 #
+# Captura a Interface usada na rede
+interface_usada_narede=$(ip -4 addr show | grep "state UP" | awk '{ print $2 }' | sed 's/://') 
+#
 # Captura o IP Interno 
-ip_interno=$(ip -4 addr show dev $interface1 | grep inet | tr -s " " | cut -d" " -f3 | head -n 1)
+ip_interno=$(ip -4 addr show dev $interface_usada_narede | grep inet | tr -s " " | cut -d" " -f3 | head -n 1 | sed 's/\/24//')
 #
 # Define o site da Google para teste de conexão e navegação
 checksite=www.google.com
