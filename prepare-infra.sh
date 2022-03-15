@@ -1,15 +1,19 @@
 #!/bin/bash
-
-# Variáveis
-IP_Gateway=`/sbin/ip route | awk '/default/ { print $3 }'`
-#IP_DNS=`cat /etc/resolv.conf | awk '/nameserver/ {print $2}' | awk 'NR == 1 {print; exit}'`
-IP_DNS=$(systemd-resolve --status | grep "Current DNS Server:" | sed "s/ Current DNS Server: //")
-IP_Address_Externo=$(dig @ns1-1.akamaitech.net ANY whoami.akamai.net +short)
-IP_Address_Interno=$(ip -4 addr show dev $Interface1 | grep inet | tr -s " " | cut -d" " -f3 | head -n 1)
-Interfaces=$(ip -brief token | wc -l)
-Interface=$(ip -brief token | sed '2d')
-Interface1=$(echo $Interface | awk '{print $NF}')
-CheckSite=www.google.com
+#
+# Projeto: Smart-Infra é uma coleção de scripts em Bash para automação de infraestrutura de rede em linux.
+# Hospedado:  https://github.com/sandrodias-sysadmin/smart-infra
+# Autor: Sandro Dias
+# E-mail: sandrodias@gmail.com
+#
+# Caminho Absoluto: /smart-infra/begin/prepare.sh
+# Função: Levantar informações cruciais sobre o sistema, rede e etc guardando-as em variáveis
+# Atualizado em: 15/03/2022
+# Versao: 0.1
+#
+#
+# ################### INFORMAÇÕES DA REDE ####################
+#
+# Variáveis com respostas para as funções logo abaixo
 IP_Gateway_off="Sem comunicação com gateway, verifique a rede física..."
 DNSok="O DNS ($IP_DNS) respondeu ao ping."
 DNSoff="O DNS ($IP_DNS) não conseguiu responder, verifique se o IP do DNS está correto."
@@ -19,10 +23,13 @@ PortaOK="Teste OK, a porta ($PortaSite) está disponível em ($CheckSite)"
 PortaOff="Falha no teste não consegui acessar a porta ($PortaSite) em ($CheckSite)"
 PortaSite=80
 prepare_phase="x"
-
+#
+# Executa o /smart-infra/discovery/discovery-infra.sh
+# Para Capturar informções da rede
+source /smart-infra/discovery/discovery-infra.sh
+#
 # Funções do teste de Conexão com a internet
-
-
+#
 function function_PING_DNS
 {
   tput setaf 6; echo && echo "Pingando 4x no DNS Primário ($IP_DNS) ..." && echo; tput sgr0;
