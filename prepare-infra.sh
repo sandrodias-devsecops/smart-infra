@@ -13,6 +13,7 @@
 #
 # ################### INFORMAÇÕES DA REDE ####################
 #
+source 
 # Variáveis com respostas para as funções logo abaixo
 IP_Gateway_off="Sem comunicação com gateway, verifique a rede física..."
 DNSok="O DNS ($IP_DNS) respondeu ao ping."
