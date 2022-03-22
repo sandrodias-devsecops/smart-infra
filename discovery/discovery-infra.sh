@@ -7,8 +7,8 @@
 #
 # Caminho Absoluto: /smart-infra/discovery/discovery-infra.sh
 # Função: Levantar informações cruciais sobre o sistema, rede e etc guardando-as em variáveis
-# Atualizado em: 14/03/2022
-# Versao: 0.1
+# Atualizado em: 22/03/2022
+# Versao: 0.2
 #
 #
 # ################### INFORMAÇÕES DA REDE ####################
@@ -49,5 +49,7 @@ ip_interno=$(ip -4 addr show dev $interface_usada_narede | grep inet | tr -s " "
 #
 # Define o site da Google para teste de conexão e navegação
 checksite=www.google.com
+#
+hostname=$(hostname)
 #
 # 
