@@ -36,29 +36,29 @@ Antes de executar analise o código do script e faça suas adequações se for o
 A instalação foi divida em fases, até o momento são 9 no total mas que podem mudar a qualquer momento ou serem reorganizadas.
 
 ***Fase 0***
-* Testa se Smart Infra foi instalada antes
+=> Testa se Smart Infra foi instalada antes
 
 ***Fase 1***
-* Cria a Árvore de Diretórios que será usada na Smart Infra
+=> Cria a Árvore de Diretórios que será usada na Smart Infra
 
 ***Fase 2***
-* Busca Informações da rede para Testar Conexões com a Internet
+=> Busca Informações da rede para Testar Conexões com a Internet
 
 ***Fase 3***
-* Atualiza os Repositórios cadastrados
+=> Atualiza os Repositórios cadastrados
 
 ***Fase 4***
-* Atualiza o Sistema Operacional
+=> Atualiza o Sistema Operacional
 
 ***Fase 5***
-* Instala Pacotes Essenciais ao Uso inicial da Smart Infra
+=> Instala Pacotes Essenciais ao Uso inicial da Smart Infra
 
 ***Fase 6***
-* Clona o Repositório Smart Infra do Github
+=> Clona o Repositório Smart Infra do Github
 
 ***Fase 7***
-* Instala os Scripts que foram clonados
+=> Instala os Scripts que foram clonados
 
 ***Fase 8***
-* Configura o cabeçalho padrão que será exibido na maioria dos scripts
+=> Configura o cabeçalho padrão que será exibido na maioria dos scripts
 
