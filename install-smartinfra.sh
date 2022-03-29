@@ -449,6 +449,7 @@ function_ConfigureCompany() {
 #
 ##############################
 #
+
 	clear
 	echo -e "\n Terminal aguardando comandos\n"
 	exit
