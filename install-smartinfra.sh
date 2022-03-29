@@ -7,8 +7,8 @@
 #
 # Caminho Absoluto: /smart-infra/install-smart-infra.sh
 # Função: Levantar informações cruciais sobre o sistema, rede e etc guardando-as em variáveis
-# Atualizado em: 28/03/2022
-# Versao: 0.6
+# Atualizado em: 29/03/2022
+# Versao: 0.7
 #
 #
 ##############################
@@ -63,6 +63,10 @@ InstallRequirements_CompletedStep=$(echo -e "       Instalação de Pacotes Esse
        SmartResources_FailureStep=$(echo -e "       Instalação de Recursos da Smart Infra            [ Falhou.... ]")
        SmartResources_RunningStep=$(echo -e "       Instalando os Recursos da Smart Infra            [ Executando ]")
 # Fase 8
+   ConfigureCompany_CompletedStep=$(echo -e "       Configuração do Logo/Texto da Empresa            [ Concluído. ]")
+     ConfigureCompany_FailureStep=$(echo -e "       Configuração do Logo/Texto da Empresa            [ Falhou.... ]")
+     ConfigureCompany_RunningStep=$(echo -e "       Configuração do Logo/Texto da Empresa            [ Executando ]")
+
 # Fase 9
 # Fase 10
 #############################
@@ -400,6 +404,22 @@ InstallRequirements_CompletedStep=$(echo -e "       Instalação de Pacotes Esse
 	read -p "      Você está pronto pra atualizar os Repositórios... Pressione ENTER"
 }
 # Fase 8 - 
+function_ConfigureCompany() {
+	clear
+	echo -e "\n\n     +-----------------------------------------------------------------+\n     │                                                                 │\n     │         S  M  A  R  T      --- = ---     I  N  F  R  A          │\n     │                                                                 │\n     +-----------------------------------------------------------------+\n                           Preparando ambiente...\n\n"
+	echo -e "$IfInstalled_CompletedStep"
+	echo -e "$MakeDir_CompletedStep"
+	echo -e "$TestConnections_CompletedStep"
+	echo -e "$AptUpdate_CompletedStep"
+	echo -e "$AptDistUpgrade_CompletedStep"
+	echo -e "$InstallRequirements_CompletedStep"
+	echo -e "$CloningGithub_CompletedStep"
+	echo -e "$SmartResources_CompletedStep"
+	echo -e "$ConfigureCompany_RunningStep"
+	echo -e "\n\n                                  --- = ---\n\n"
+	read -ep "  Qual é o nome da empresa: " empresa && echo &&  figlet "     $empresa" && echo -e "     +-----------------------------------------------------------------+\n"
+	read -p "ENTER"
+}
 # Fase 9 - 
 # Fase 10 -
 ##############################
@@ -422,7 +442,8 @@ InstallRequirements_CompletedStep=$(echo -e "       Instalação de Pacotes Esse
 #function_CloningGithub
 # Fase 7 - Instala os Scripts que foram clonados
 #function_SmartResources
-# Fase 8 - 
+# Fase 8 -
+#function_ConfigureCompany 
 # Fase 9 - 
 # Fase 10 -
 #
