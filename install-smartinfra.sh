@@ -17,12 +17,12 @@
 # Fase 0 - Testa se Smart Infra foi instalada antes
 # Fase 1 - Cria a Árvore de Diretórios que será usada na Smart Infra
 # Fase 2 - Busca Informações da rede para Testar Conexões com a Internet
-# Fase 3 - Atualiza os Repositórios cadastrados
+# Fase 3 - Atualiza os Repositórios cadastrados	
 # Fase 4 - Atualiza o Sistema Operacional
 # Fase 5 - Instala Pacotes Essenciais ao Uso inicial da Smart Infra
 # Fase 6 - Clona o Repositório Smart Infra do Github
 # Fase 7 - Instala os Scripts que foram clonados
-# Fase 8 - 
+# Fase 8 - Configura o cabeçalho padrão que será exibido na maioria dos scripts
 # Fase 9 - 
 # Fase 10 -
 #
@@ -403,7 +403,7 @@ InstallRequirements_CompletedStep=$(echo -e "       Instalação de Pacotes Esse
 	echo -e "\n\n                                  --- = ---\n\n"
 	read -p "      Você está pronto pra atualizar os Repositórios... Pressione ENTER"
 }
-# Fase 8 - 
+# Fase 8 - Configura o cabeçalho padrão que será exibido na maioria dos scripts
 function_ConfigureCompany() {
 	clear
 	echo -e "\n\n     +-----------------------------------------------------------------+\n     │                                                                 │\n     │         S  M  A  R  T      --- = ---     I  N  F  R  A          │\n     │                                                                 │\n     +-----------------------------------------------------------------+\n                           Preparando ambiente...\n\n"
