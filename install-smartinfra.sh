@@ -297,7 +297,7 @@ InstallRequirements_CompletedStep=$(echo -e "       Instalação de Pacotes Esse
 	echo -e "$AptDistUpgrade_CompletedStep"
 	echo -e "$InstallRequiriments_CompletedStep"
 	echo -e "\n\n                                  --- = ---\n\n"
-	sudo apt install -y figlet neofetch git wget curl unzip unrar bunzip
+	sudo apt install -y figlet neofetch git wget curl unzip unrar bunzip sendEmail
 	date_installed=$(cat /smart-infra/logs/status/installedstep.log | awk '{ print $1" "$2 }' )
 	phase_installed=$(cat /smart-infra/logs/status/installedstep.log | awk '{ print $3 }' )
 	if [ $? = 0 ]; then
