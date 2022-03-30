@@ -1,46 +1,34 @@
 #!/bin/bash
-
+source
 clear
-DirStart=`pwd`
+DirStart=$(pwd)
 #whiptail --title 'BUSCA POR ARQUIVOS DUPLICADOS - ALTA SPORTS'  --yes-button "CONTINUAR" --no-button "TROCAR O DIRETÓRIO"  --yesno "Atualmente você está no diretório $DirStart." 8 80 0
 echo ""
 echo "BUSCA POR ARQUIVOS DUPLICADOS - ALTA SPORTS"
 echo "Atualmente você está buscando recursivamente no diretório:"
 echo "$DirStart."
 
-rdfind $DirStart > espaco_duplicado.txt
-sed -i '1,9d' espaco_duplicado.txt
-sed -i '$d' espaco_duplicado.txt
-sed -i 's/ //g' espaco_duplicado.txt
-sed -i 's/Totally,/Total de /g' espaco_duplicado.txt
-sed -i 's/\GiB/\GB/g' espaco_duplicado.txt
-sed -i 's/canbereduced./ em arquivos duplicados./g' espaco_duplicado.txt
-sed -i 's/#//g' results.txt
-sed -i 's/ Automatically //g' results.txt
-sed -i 's/generated//g' results.txt
-sed -i 's/ duptype/STATUS/g' results.txt
-sed -i 's/id/EXCLUIR/g' results.txt
-sed -i 's/depth/EXCLUIR/g' results.txt
-sed -i 's/size/TAMANHO/g' results.txt
-sed -i 's/device/EXCLUIR/g' results.txt
-sed -i 's/inode/EXCLUIR/g' results.txt
-sed -i 's/priority/EXCLUIR/g' results.txt
-sed -i 's/name/NOME_E_LOCAL/g' results.txt
-sed -i 's/DUPTYPE_FIRST_OCCURRENCE/Original/g' results.txt
-sed -i 's/DUPTYPE_WITHIN_SAME_TREE/Duplicado.../g' results.txt
-sed -i 's/ /_/g' results.txt
-sed -i 's/\//;/g' results.txt
+rdfind $DirStart > duplicados_encontrados.csv
+formula=$(`=SE([@SIZE]<=$A$3*4;"4 KB";SE([@SIZE]<$B$3;CONCATENAR(ARRED([@SIZE]/$A$3;2);" KB");SE([@SIZE]<$C$3;CONCATENAR(ARRED([@SIZE]/$B$3;2);" MB");SE([@SIZE]<$D$3;CONCATENAR(ARRED([@SIZE]/$C$3;2);" GB");CONCATENAR(ARRED([@SIZE]/$D$3;2);" TB")))))`)
+
+sed -i '1,9d;$d;s/Totally, /Total\ de\ /;s/\ KiB/\ KB/;s/\ MiB/\ MB/;s/\ GiB/\ GB/;s/\ TiB/\ TB/;s/ can be reduced./\ em\ arquivos\ duplicados\ que\ precisam\ ser\ tratados\ no\ excel./g' duplicados_encontrados.csv
+sed -i '1i RELATORIO \DE \ARQUIVOS \DUPLICADOS \- \ALTA \SPORTS' duplicados_encontrados.csv
+echo -e "\nSTATUS;EXCLUIR;EXCLUIR;TAM_BYTES;TAMANHO;EXCLUIR;EXCLUIR;NOME_E_LOCAL" >> duplicados_encontrados.csv
+
+sed -i 's/ /;/g;s/\//;/g;s/DUPTYPE_FIRST_OCCURRENCE/Arq_Original/g;s/DUPTYPE_WITHIN_SAME_TREE/Duplicado/g' results.txt
 sed -i '$d' results.txt
-sed -i '1i RELATORIO \DE \ARQUIVOS \DUPLICADOS \- \ALTA \SPORTS' espaco_duplicado.txt
-echo "" >> espaco_duplicado.txt
-cat results.txt >> espaco_duplicado.txt
+
+tac results.txt >> duplicados_encontrados.csv
+sed -i '$d' duplicados_encontrados.csv
+sed -i '$d' duplicados_encontrados.csv
+
 rm -rf results.txt
-sed -i '3d' espaco_duplicado.txt
-mv espaco_duplicado.txt resultado.csv
+
 clear
 echo ""
 echo "BUSCA POR ARQUIVOS DUPLICADOS - ALTA SPORTS"
-echo "Relatório $DirStart/resultado.csv criado com sucesso."
+echo "Relatório $DirStart/duplicados_encontrados.csv criado com sucesso!"
+
 echo ""
-ls -lsh resultado.csv
+ls -lsh duplicados_encontrados.csv
 echo ""

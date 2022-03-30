@@ -126,34 +126,31 @@ InstallRequirements_CompletedStep=$(echo -e "       Instalação de Pacotes Esse
 	echo -e "\n\n                                  --- = ---\n\n"
 	echo -e "                     ÁRVORE DE DIRETÓRIOS SMART INFRA\n     +-----------------------------------------------------------------+\n"
 	echo -e "             Caminho absoluto criado          -          PATH"
+	echo -e "     ┌────────────────────────────────────────┬────────────────────────┐"
 	sudo mkdir /smart-infra
 	sleep 0.2
-	echo -e "     ┌────────────────────────────────────────┬────────────────────────┐"
 	echo -e "             /smart-infra                     │          Add"
-	sudo mkdir /smart-infra/aboutme
-	sleep 0.2
-	echo -e "                ├> /aboutme                   │          Add"
-	sudo mkdir /smart-infra/begin
-	sleep 0.2
-	echo -e "                ├> /begin                     │          Add"
 	sudo mkdir /smart-infra/deploy
 	sleep 0.2
 	echo -e "                ├> /deploy                    │          Add"
 	sudo mkdir /smart-infra/deploy/implanted
 	sleep 0.2
 	echo -e "                │     └> /implanted           │          Add"
+	sudo mkdir /smart-infra/deploy/saved
+	sleep 0.2
+	echo -e "                │     └> /saved               │          Add"
 	sudo mkdir /smart-infra/developing
 	sleep 0.2
 	echo -e "                ├> /developing                │          Add"
-	sudo mkdir /smart-infra/discovery
-	sleep 0.2
-	echo -e "                ├> /discovery                 │          Add"
 	sudo mkdir /smart-infra/logs
 	sleep 0.2
-	echo -e "                └> /logs                      │          Add"
+	echo -e "                ├> /logs                      │          Add"
 	sudo mkdir /smart-infra/logs/status
 	sleep 0.2
-	echo -e "                      └> /status              │          Add"
+	echo -e "                │     └> /status              │          Add"
+	sudo mkdir /smart-infra/settings
+	sleep 0.2
+	echo -e "                └> /settings                  │          Add"
 	echo -e "     └────────────────────────────────────────┴────────────────────────┘"
 	sudo echo ""  >> /etc/bash.bashrc
 	sudo echo "# Caminho dos Scripts da Smart Infra"  >> /etc/bash.bashrc
@@ -300,7 +297,7 @@ InstallRequirements_CompletedStep=$(echo -e "       Instalação de Pacotes Esse
 	echo -e "$AptDistUpgrade_CompletedStep"
 	echo -e "$InstallRequiriments_CompletedStep"
 	echo -e "\n\n                                  --- = ---\n\n"
-	sudo apt install -y figlet neofetch git wget curl
+	sudo apt install -y figlet neofetch git wget curl unzip unrar bunzip
 	date_installed=$(cat /smart-infra/logs/status/installedstep.log | awk '{ print $1" "$2 }' )
 	phase_installed=$(cat /smart-infra/logs/status/installedstep.log | awk '{ print $3 }' )
 	if [ $? = 0 ]; then
