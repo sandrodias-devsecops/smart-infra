@@ -20,7 +20,7 @@ Partindo da premissa que já temos um servidor recém instalado e navegando na i
 Para baixar digite:
 
 ```
-wget https://github.com/sandrodias-sysadmin/smart-infra/blob/ea020bee527bae7ecc1f504ef775ccad64313e1b/install-smartinfra.sh
+wget https://github.com/sandrodias-sysadmin/smart-infra/blob/602018b87c69308f5482157886dd57dc41997e23/install-smartinfra.sh
 ```
 
 Em seguida execute com privilégios administrativos:
