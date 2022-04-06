@@ -1,0 +1,17 @@
+.\" Manual para Smart-Infra.
+.\" Contato sandrodias,oficiall@gmail.com para corrigir erros ou erros de digitação.
+.TH man 8 "02 março 2022 " "Versão 0.1" "Manual da Smart-Infra"
+.SH NOME
+smart-infra \- printa uma mensagem na tela
+.SH SINOPSE
+Claro que tudo começa pela instalação da Smart-Infra usando o install-smartinfra.sh.
+.SH DESCRIÇÃO
+É uma coleção de Scripts para automatizar a Infraestrutura de Data Center usando Linux baseado em Ubuntu 20.04.
+.SH OPÇÕES
+Digite apenas sudo install-smartinfra.sh.
+.SH VEJA TAMBÉM
+useradd(8), passwd(5), teste.debian(8)
+.SH BUGS
+Não há bugs/problemas
+.SH AUTOR
+Sandro Dias (sandrodias-oficiall@gmail.com)
