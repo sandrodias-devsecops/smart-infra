@@ -418,9 +418,9 @@ function_ConfigureCompany() {
 # Rascunho das Fases
 
 # Fase 0 - Testa se Smart Infra foi instalada antes
-function_IfInstalled
+#function_IfInstalled
 # Fase 1 - Cria a Árvore de Diretórios que será usada na Smart Infra
-function_MakeDir
+#function_MakeDir
 # Fase 2 - Busca Informações da rede para Testar Conexões com a Internet
 function_TestConnections
 # Fase 3 - Atualiza os Repositórios cadastrados
@@ -428,11 +428,11 @@ function_AptUpdate
 # Fase 4 - Atualiza o Sistema Operacional
 function_AptDistUpgrade
 # Fase 5 - Instala Pacotes Essenciais ao Uso inicial da Smart Infra
-function_InstallRequirements
+#function_InstallRequirements
 # Fase 6 - Clona o Repositório Smart Infra do Github
-function_CloningGithub
+#function_CloningGithub
 # Fase 7 - Instala os Scripts que foram clonados
-function_SmartResources
+#function_SmartResources
 # Fase 8 -
 #function_ConfigureCompany 
 # Fase 9 - 
