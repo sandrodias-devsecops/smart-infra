@@ -444,5 +444,4 @@ function_SmartResources
 	clear
 	echo -e "\n Terminal aguardando comandos\n"
 	#exit
-read -p Fim
 
