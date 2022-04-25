@@ -41,7 +41,7 @@ function_InfoConnections() {
 	interface_gateway=$(ip route | awk '/default/ { print $5 }')
 #
 # Captura o IP do DNS primário
-	ip_dns=$(systemd-resolved --status | grep "Current DNS Server:" | sed "s/  Current DNS Server: //")
+	ip_dns=$(resolvectl | grep "Current DNS Server:" | sed "s/       DNS Servers: //" | awk '{print $4}')
 #
 # Captura o IP Externo
 	ip_externo=$(dig @ns1-1.akamaitech.net ANY whoami.akamai.net +short)
