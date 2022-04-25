@@ -17,13 +17,8 @@
 
  function_TestConnections() {
 	clear
-	echo -e "\n\n     +-----------------------------------------------------------------+\n     │                                                                 │\n     │         S  M  A  R  T      --- = ---     I  N  F  R  A          │\n     │                                                                 │\n     +-----------------------------------------------------------------+\n                           Preparando ambiente...\n\n"
-	echo -e "$IfInstalled_CompletedStep"
-	echo -e "$MakeDir_CompletedStep"
-	echo -e "$TestConnections_RunningStep"
-	echo -e "\n\n                                  --- = ---\n\n"
-#
-	echo -e "                              INFORMAÇÕES DA REDE\n     +-----------------------------------------------------------------+\n"
+echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = -->
+
 # ################### INFORMAÇÕES DA REDE ####################
 # Captura a quantidade de interfaces de rede detectadas
 #
