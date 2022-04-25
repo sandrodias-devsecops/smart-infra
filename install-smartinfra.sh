@@ -154,7 +154,7 @@ InstallRequirements_CompletedStep=$(echo -e "       Instalação de Pacotes Esse
 	echo -e "     └────────────────────────────────────────┴────────────────────────┘"
 	sudo echo ""  >> /etc/bash.bashrc
 	sudo echo "# Caminho dos Scripts da Smart Infra"  >> /etc/bash.bashrc
-	sudo echo "export PATH=$PATH:/smart-infra:/smart-infra/aboutme:/smart-infra/begin:/smart-infra/deploy:/smart-infra/deploy/implanted:/smart-infra/developing:/smart-infra/discovery:/smart-infra/logs:/smart-infra/logs/status" >> /etc/bash.bashrc
+	sudo echo "export PATH=$PATH:/smart-infra:/smart-infra/deploy" >> /etc/bash.bashrc
 	sudo echo ""  >> /etc/bash.bashrc
 	sudo date +%d-%B-%Y" "%H:%M" F1" > /smart-infra/logs/status/installedstep.log
 	echo -e "             Árvore de diretórios criada e adicionada no PATH.\n\n"
