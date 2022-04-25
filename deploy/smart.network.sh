@@ -15,10 +15,7 @@
 #
 
 
- function_TestConnections() {
-	clear
-echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = -->
-
+function_InfoConnections() {
 # ################### INFORMAÇÕES DA REDE ####################
 # Captura a quantidade de interfaces de rede detectadas
 #
@@ -44,7 +41,7 @@ echo -e "\n\n     +-------------------------------------------------------------
 	interface_gateway=$(ip route | awk '/default/ { print $5 }')
 #
 # Captura o IP do DNS primário
-	ip_dns=$(systemd-resolve --status | grep "Current DNS Server:" | sed "s/  Current DNS Server: //")
+	ip_dns=$(systemd-resolved --status | grep "Current DNS Server:" | sed "s/  Current DNS Server: //")
 #
 # Captura o IP Externo
 	ip_externo=$(dig @ns1-1.akamaitech.net ANY whoami.akamai.net +short)
@@ -61,29 +58,31 @@ echo -e "\n\n     +-------------------------------------------------------------
 	hostname=$(hostname)
 #
 #
-	echo -e "                        Relatório geral da rede atual"
-	sleep 0.2
+clear
+	echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n           I N F O R M A Ç Õ E S    A T U A I S    D A    R E D E"
+
 	echo -e "     ┌─────────────────────────────┬───────────────────────────────────┐"
 	echo -e "         Nome do Computador        │     $hostname"
-	sleep 0.2
+	sleep 0.1
 	echo -e "         Placas Detectadas         │     $qtd_interfaces"
-	sleep 0.2
-	echo -e "         Interface 1               │     $interface1"
-	sleep 0.2
-	echo -e "         Interface 2               │     $interface2"
-	sleep 0.2
+	sleep 0.1
+	echo -e "         Nome da Interface 1       │     $interface1"
+	sleep 0.1
+	echo -e "         Nome da Interface 2       │     $interface2"
+	sleep 0.1
 	echo -e "         Interface Usada na rede   │     $interface_usada_narede"
-	sleep 0.2
+	sleep 0.1
 	echo -e "          └> usando IP Local       │     $ip_interno"
-	sleep 0.2
+	sleep 0.1
 	echo -e "          └> usando IP Externo     │     $ip_externo"
-	sleep 0.2
+	sleep 0.1
 	echo -e "          └> usando Gateway        │     $ip_gateway"
-	sleep 0.2
+	sleep 0.1
 	echo -e "          └> usando DNS            │     $ip_dns"
-	sleep 0.2
+	sleep 0.1
 	echo -e "     └─────────────────────────────┴───────────────────────────────────┘"
 	echo -e "            O relatório pode ser consultado nos arquivos de LOG."
 	echo -e "\n\n                                  --- = ---\n\n"
-	read -p "      Você está pronto pra atualizar os Repositórios... Pressione ENTER"
 }
+
+function_InfoConnections
