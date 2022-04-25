@@ -1,17 +1,29 @@
+  GNU nano 4.8                                                                             smart.search-duplicates                                                                                        
 #!/bin/bash
+#
+# Projeto: Smart-Infra é uma coleção de scripts em Shell Script para rodar em
+#                  Bash facilitando a implantação de infraestrutura de rede em linux.
+# Hospedado:  https://github.com/sandrodias-sysadmin/smart-infra
+# Autor: Sandro Dias
+# E-mail: sandrodias.oficiall@gmail.com
+#
+# Caminho Absoluto: /smart-infra/smart.search-duplicates
+# Função: Busca por arquivos duplicados no diretórioatual e seus subdiretórios
+# Atualizado em: 20/04/2022
+# Versao: 0.1
+#
+##############################
+#
 source
 clear
-DirStart=$(pwd)
-#whiptail --title 'BUSCA POR ARQUIVOS DUPLICADOS - ALTA SPORTS'  --yes-button "CONTINUAR" --no-button "TROCAR O DIRETÓRIO"  --yesno "Atualmente você está no diretório $DirStart." 8 80 0
-echo ""
-echo "BUSCA POR ARQUIVOS DUPLICADOS - ALTA SPORTS"
-echo "Atualmente você está buscando recursivamente no diretório:"
-echo "$DirStart."
+DirStart=$1
+
+echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = -->
 
 rdfind $DirStart > duplicados_encontrados.csv
-formula=$(`=SE([@SIZE]<=$A$3*4;"4 KB";SE([@SIZE]<$B$3;CONCATENAR(ARRED([@SIZE]/$A$3;2);" KB");SE([@SIZE]<$C$3;CONCATENAR(ARRED([@SIZE]/$B$3;2);" MB");SE([@SIZE]<$D$3;CONCATENAR(ARRED([@SIZE]/$C$3;2);" GB");CONCATENAR(ARRED([@SIZE]/$D$3;2);" TB")))))`)
+formula=$(`=SE([@SIZE]<=$A$3*4;"4 KB";SE([@SIZE]<$B$3;CONCATENAR(ARRED([@SIZE]/$A$3;2);" KB");SE([@SIZE]<$C$3;CONCATENAR(ARRED([@SIZE]/$B$3;2);" MB");SE([@SIZE]<$D$3;CONCATENAR(ARRED([@SIZE]/$C$3;2);" >
 
-sed -i '1,9d;$d;s/Totally, /Total\ de\ /;s/\ KiB/\ KB/;s/\ MiB/\ MB/;s/\ GiB/\ GB/;s/\ TiB/\ TB/;s/ can be reduced./\ em\ arquivos\ duplicados\ que\ precisam\ ser\ tratados\ no\ excel./g' duplicados_encontrados.csv
+sed -i '1,9d;$d;s/Totally, /Total\ de\ /;s/\ KiB/\ KB/;s/\ MiB/\ MB/;s/\ GiB/\ GB/;s/\ TiB/\ TB/;s/ can be reduced./\ em\ arquivos\ duplicados\ que\ precisam\ ser\ tratados\ no\ excel./g' duplicados_en>
 sed -i '1i RELATORIO \DE \ARQUIVOS \DUPLICADOS \- \ALTA \SPORTS' duplicados_encontrados.csv
 echo -e "\nSTATUS;EXCLUIR;EXCLUIR;TAM_BYTES;TAMANHO;EXCLUIR;EXCLUIR;NOME_E_LOCAL" >> duplicados_encontrados.csv
 
@@ -25,10 +37,10 @@ sed -i '$d' duplicados_encontrados.csv
 rm -rf results.txt
 
 clear
-echo ""
-echo "BUSCA POR ARQUIVOS DUPLICADOS - ALTA SPORTS"
-echo "Relatório $DirStart/duplicados_encontrados.csv criado com sucesso!"
+echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = -->
+
+ls -lsh duplicados_encontrados.csv
 
 echo ""
-ls -lsh duplicados_encontrados.csv
-echo ""
+
+

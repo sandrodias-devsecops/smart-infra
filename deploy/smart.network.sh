@@ -1,15 +1,15 @@
 #!/bin/bash
 #
-# Projeto: Smart-Infra é uma coleção de scripts em Bash para automação de infraestrutura de rede em linux.
+# Projeto: Smart-Infra é uma coleção de scripts em Shell Script para rodar em
+#          Bash facilitando a implantação de infraestrutura de rede em linux.
 # Hospedado:  https://github.com/sandrodias-sysadmin/smart-infra
 # Autor: Sandro Dias
-# E-mail: sandrodias@gmail.com
+# E-mail: sandrodias.oficiall@gmail.com
 #
-# Caminho Absoluto: /smart-infra/install-smart-infra.sh
-# Função: Levantar informações cruciais sobre o sistema, rede e etc guardando-as em variáveis
-# Atualizado em: 29/03/2022
-# Versao: 0.7
-#
+# Caminho Absoluto: /smart-infra/deploy/smart.network
+# Função: Exibe informações básicas da rede
+# Atualizado em: 21/04/2022
+# Versao: 0.1
 #
 ##############################
 #
