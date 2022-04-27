@@ -1,0 +1,5 @@
+# Automatically generated
+# duptype id depth size device inode priority name
+DUPTYPE_FIRST_OCCURRENCE 66 2 1080199 66310 2490450 1 /dados/adm/Para Temas/wallpapertip_space-wallpaper-hd_44411 (1).jpg
+DUPTYPE_WITHIN_SAME_TREE -66 2 1080199 66310 2490451 1 /dados/adm/Para Temas/wallpapertip_space-wallpaper-hd_44411.jpg
+# end of file

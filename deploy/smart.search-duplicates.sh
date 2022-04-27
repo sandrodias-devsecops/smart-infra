@@ -18,14 +18,14 @@ source
 clear
 DirStart=$1
 
-clear; echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                           S M A R T      I N F R A\n\n         Atualmente você está escaneando recursivamente no diretório:\n         $DirStart."
+echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                           S M A R T      I N F R A\n\n         Atualmente você está escaneando recursivamente no diretório:\n         $DirStart."
 
 
 
 rdfind $DirStart > duplicados_encontrados.csv
 formula=$(`=SE([@SIZE]<=$A$3*4;"4 KB";SE([@SIZE]<$B$3;CONCATENAR(ARRED([@SIZE]/$A$3;2);" KB");SE([@SIZE]<$C$3;CONCATENAR(ARRED([@SIZE]/$B$3;2);" MB");SE([@SIZE]<$D$3;CONCATENAR(ARRED([@SIZE]/$C$3;2);" >
 
-sed -i '1,9d;$d;s/Totally, /Total\ de\ /;s/\ KiB/\ KB/;s/\ MiB/\ MB/;s/\ GiB/\ GB/;s/\ TiB/\ TB/;s/ can be reduced./\ em\ arquivos\ duplicados\ que\ precisam\ ser\ tratados\ no\ excel./g' duplicados_en>
+sed -i '1,9d;$d;s/Totally, /Total\ de\ /;s/\ KiB/\ KB/;s/\ MiB/\ MB/;s/\ GiB/\ GB/;s/\ TiB/\ TB/;s/ can be reduced./\ em\ arquivos\ duplicados\ que\ precisam\ ser\ tratados\ no\ excel./g' duplicados_encontrados.csv
 sed -i '1i RELATORIO \DE \ARQUIVOS \DUPLICADOS \- \ALTA \SPORTS' duplicados_encontrados.csv
 echo -e "\nSTATUS;EXCLUIR;EXCLUIR;TAM_BYTES;TAMANHO;EXCLUIR;EXCLUIR;NOME_E_LOCAL" >> duplicados_encontrados.csv
 
@@ -39,7 +39,7 @@ sed -i '$d' duplicados_encontrados.csv
 rm -rf results.txt
 
 clear
-clear; echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                           S M A R T      I N F R A\n\n         Atualmente você está escaneando recursivamente no diretório:\n         $DirStart."
+echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                           S M A R T      I N F R A\n\n         Atualmente você está escaneando recursivamente no diretório:\n         $DirStart."
 
 
 ls -lsh duplicados_encontrados.csv

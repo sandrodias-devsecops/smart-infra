@@ -1,0 +1,11 @@
+Now scanning "/dados", found 138 files.
+Now have 138 files in total.
+Removed 0 files due to nonunique device and inode.
+Total size is 1109586619 bytes or 1 GiB
+Removed 136 files due to unique sizes from list. 2 files left.
+Now eliminating candidates based on first bytes: removed 0 files from list. 2 files left.
+Now eliminating candidates based on last bytes: removed 0 files from list. 2 files left.
+Now eliminating candidates based on sha1 checksum: removed 0 files from list. 2 files left.
+It seems like you have 2 files that are not unique
+Totally, 1 MiB can be reduced.
+Now making results file results.txt
