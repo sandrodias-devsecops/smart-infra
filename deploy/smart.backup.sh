@@ -8,8 +8,8 @@
 #
 # Caminho Absoluto: /smart-infra/backup-custom.sh
 # Função: Criar backups com o conteúdo de diretórios ignorando seus subdiretórios
-# Atualizado em: 19/04/2022
-# Versao: 0.1
+# Atualizado em: 05/05/2022
+# Versao: 0.4
 #
 ##############################
 #
@@ -29,10 +29,11 @@
 ##############################
 #
 # Declaração Variáveis
-conf_backup="/smart-infra/settings/smart.backup.conf"
-source_folder=$(cat /smart-infra/settings/smart.backup.conf | grep source_folder | awk '{print $2}')
-destination_folder=$(cat /smart-infra/settings/smart.backup.conf | grep destination_folder | awk '{print $2}')
-exclusion=$(cat /smart-infra/settings/smart.backup.conf | grep exclusion | awk '{print $2}')
+#source /smart-infra/settings/smart.backup.conf
+ #conf_backup="/smart-infra/settings/smart.backup.conf"
+ #source_folder=$(cat /smart-infra/settings/smart.backup.conf | grep source_folder | awk '{print $2}')
+ #destiny_folder=$(cat /smart-infra/settings/smart.backup.conf | grep destiny_folder | awk '{print $2}')
+ #exclusion=$(cat /smart-infra/settings/smart.backup.conf | grep exclusion | awk '{print $2}')
 #
 ##############################
 #
