@@ -14,126 +14,232 @@
 ##############################
 #
 # Rascunho das Fases
-# Fase  0 - Cria as configurações necessárias ao processo de backup. 
+# Fase  0 - Verifica se os parâmetros informados estão corretos para o processo de backup.
 # Fase  1 - Verifica o existe uma tarefa de backup cadastrada no CRON.
 # Fase  2 - Verifica a existência de algum backup anterior que não foi retirado do diretório de destino e indica a liberação de espaço em disco.
 # Fase  3 - Calcula o espaço bruto dos diretórios antes do backup e testa se há espaço suficiente para realizá-lo.
 # Fase  4 - Cria a lista de diretórios(e suas exceções se houver) que serão copiados no processo de backup.
 # Fase  5 - Cria o backup e registra as ocorrências em Log para possíveis consultas posteriores.
 # Fase  6 - Envia email(s) para comunicar o status final do backup com os logs anexados.
-# Fase  7 - 
-# Fase  8 - 
-# Fase  9 - 
+# Fase  7 -
+# Fase  8 -
+# Fase  9 -
 # Fase 10 -
+#
+##############################
+#
+# Cria os parâmetros usados no script
+#
+if [ ! $# -gt 0 ]; then
+	clear
+	echo -e "\n Você precisa informar os parâmetros necessários"
+	echo -e "\nPara Origem   : -s + "/diretorio_origem""
+	echo -e "Para Destino  : -d + "/diretorio_destino""
+	echo -e "Para Exclusão : -e + "/diretorio_excluido"\n"
+	echo -e "\nEXEMPLO: sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
+
+else
+	while getopts hs:d:e: option; do
+		case "${option}" in
+
+		h)
+			clear
+			echo -e "\n Você precisa informar os parâmetros necessários"
+			echo -e "\nPara Origem   : -s + "/diretorio_origem""
+			echo -e "Para Destino  : -d + "/diretorio_destino""
+			echo -e "Para Exclusão : -e + "/diretorio_excluido"\n"
+			echo -e "\nEXEMPLO: sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
+			;;
+		s)
+			source=${OPTARG}
+			listtemp="${source}/temp.txt"
+			listdir="${source}/diretorios.txt"
+			;;
+		d)
+			destiny=${OPTARG}
+			;;
+		e)
+			exclusion=${OPTARG}
+			;;
+		esac
+	done
+fi
 #
 ##############################
 #
 # Declaração Variáveis
-#source /smart-infra/settings/smart.backup.conf
- #conf_backup="/smart-infra/settings/smart.backup.conf"
- #source_folder=$(cat /smart-infra/settings/smart.backup.conf | grep source_folder | awk '{print $2}')
- #destiny_folder=$(cat /smart-infra/settings/smart.backup.conf | grep destiny_folder | awk '{print $2}')
- #exclusion=$(cat /smart-infra/settings/smart.backup.conf | grep exclusion | awk '{print $2}')
+#
+UncompressedSize=$(du -sh "${source}" | awk '{print $1}')
+AvailableSpace=$(df -h "${destiny}" | awk '{print $4}' | sed 1d)
+PartitionSpace=$(df -h "${destiny}" | awk '{print $1}' | sed 1d)
+SpaceOldBackup=$(du -sh "${destiny}" | awk '{print $1}')
+#
+##############################
+#
+# Declaração Variáveis de Resposta
+CheckParam_Source=""${source}" não é um diretório de origem válido."
+CheckParam_Destiny=""${destiny}" não é um diretório de destino válido."
+
+CheckCRON_CompletedStep=
+CheckCRON_FailureStep=
+CheckCRON_RunningStep=
+
+CheckBackupOLD_CompletedStep=
+CheckBackupOLD_FailureStep=
+CheckBackupOLD_RunningStep=
+
+CheckSpace_CompletedStep=
+CheckSpace_FailureStep=
+CheckSpace_RunningStep=
+
+CreateListDestiny_CompletedStep=
+CreateListDestiny_FailureStep=
+CreateListDestiny_RunningStep=
+
+CreateBackup_CompletedStep=
+CreateBackup_FailureStep=
+CreateBackup_RunningStep=
+
+SendEmail_CompletedStep=
+SendEmail_FailureStep=
+SendEmail_RunningStep=
 #
 ##############################
 #
 # Funções usadas nas Fases
-# Fase  0 - Cria as configurações necessárias ao processo de backup.
-function_ConfigBackup(){
-clear
-if test -f "$conf_backup" 
+function_HeaderDefault() {
+	clear
+	echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                         S M A R T     I N F R A"
+ 	    echo -e "                           SCRIPT  DE  BACKUP\n" # Define o Título do Script
+	
+}
+# Fase  0 - Verifica se os parâmetros informados estão corretos para o processo de backup.
+function_CheckParam() {
+	#     +-----------------------------------------------------------------+
+	if [ ! -d "${source}" ]; then
+		echo "        "${CheckParam_Source}""
+		exit 1
+	elif
+		[ ! -d "${destiny}" ]
 	then
-		echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                   P O L Í T I C A    D E    B A C K U P\n"
-		echo -e     "         Atualmente você tem as seguintes configurações para backup.\n"
-		echo -e     "     ┌────────────────────────────────┬────────────────────────────────┐\n               DIR ORIGEM             =        $source_folder\n                                      |\n               DIR DESTINO            =        $destination_folder\n     └────────────────────────────────┴────────────────────────────────┘\n      Arquivo de configuração: $conf_backup\n"
-		echo -e     "       Deseja trocar o diretório de origem do backup?\n       Escolha \"N\" ou \"s\":"
-		read YN_change_source
-		case $YN_change_source in
-			[Ss]) echo -e Sim ;;
-			[Nn]) echo -e Não ;;
-			*) echo "Digite apenas \"S\" para SIM ou \"N\"(ou somente ENTER) para NÃO"
-		esac
-	#else
-fi
+		echo "        "${CheckParam_Destiny}""
+		exit 1
+	else
+		echo > /dev/null
+	fi
 }
 # Fase  1 - Verifica o existe uma tarefa de backup cadastrada no CRON.
-function_CheckCRON(){
-clear
-		echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                   P O L Í T I C A    D E    B A C K U P\n"
-		echo -e     "         Checando possíveis tarefas de backup agendadas no CRONTAB.\n"
-sleep 3
+function_CheckCRON() {
+	echo
+	#     +-----------------------------------------------------------------+
 }
-# Fase  2 - Verifica a existência de algum backup anterior que não foi retirado do diretório de destino e indica a liberação de espaço em disco.
-function_CheckBackupOLD(){
-clear
-		echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                   P O L Í T I C A    D E    B A C K U P\n"
-		echo -e     "         Checando possíveis a existência de backups anteriores.\n"
-sleep 3
+# Fase  2 - Calcula o espaço bruto dos diretórios antes do backup e testa se há espaço suficiente para realizá-lo.
+function_CheckSpace() {
+	echo -e "                        AVALIAÇÃO DO ESPAÇO EM DISCO"
+	echo -e "     +-----------------------------------------------------------------+"
+	sleep 0.1
+	echo -e "         Dir.Origem : "${source}""
+	sleep 0.1
+	echo -e "         Esp. Bruto : "${UncompressedSize}""
+	sleep 0.1
+	echo -e "         Dir.Destin : "${destiny}""
+	sleep 0.1
+	echo -e "         Disc.Parti : "${PartitionSpace}""
+	sleep 0.1
+	echo -e "         Esp.Dispon : "${AvailableSpace}"\n\n"
 }
-# Fase  3 - Calcula o espaço bruto dos diretórios antes do backup e testa se há espaço suficiente para realizá-lo.
-function_CheckSpace(){
-clear
-		echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                   P O L Í T I C A    D E    B A C K U P\n"
-		echo -e     "         Checando se o espaço disponível em disco é suficiente.\n"
-sleep 3
+# Fase  3 - Verifica a existência de algum backup anterior que não foi retirado do diretório de destino e indica a liberação de espaço em disco.
+function_CheckBackupOLD() {
+	#     +-----------------------------------------------------------------+
+CheckBackupOLD=$(ls "${destiny}" | wc -l)
+if [ ! "${CheckBackupOLD}" -eq 0 ]; then
+		#echo -e "        O diretório "${destiny}"\n        contém o backup anterior, primeiro mova os dados\n        pra liberar espaço em disco e reinicie o processo\n        de backup."
+		#EmailEspaceDisc="O $0 não realizou backup de "${source}" para "${destiny}" pois o backup anterior precisa ser retirado do servidor para liberar espaco em disco!"
+	    #exit 1
+	sleep 0.1
+	echo -e "                      DICA DE OTIMIZAÇÃO DO ESPAÇO EM DISCO"
+	echo -e "     +-----------------------------------------------------------------+"
+	sleep 0.1
+	echo -e "       Percebi que ainda existem arquivos em disco do Backup anterior."
+	echo -e "       Mova ou Apague esses arquivos para liberar até "${SpaceOldBackup}" de espaço.\n\n"
+else
+	echo > /dev/null
+fi
 }
 # Fase  4 - Cria a lista de diretórios(e suas exceções se houver) que serão copiados no processo de backup.
-function_CreateListDestination(){
-clear
-		echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                   P O L Í T I C A    D E    B A C K U P\n"
-		echo -e     "         Criando a lista de diretórios que serão copiados no backup.\n"
-cd /dados
-du -h > /dados/temp.txt
-sed -i 's/\ /§/g' /dados/temp.txt
-tac /dados/temp.txt | awk '{print $2}'| sed 's/\.\///g' > /dados/diretorios.txt
-sed -i 1d /dados/diretorios.txt
-sed -i 's/§/\ /g' /dados/diretorios.txt 
-rm -rf /dados/temp.txt 
-sleep 3
+function_CreateListDestiny() {
+		#     +-----------------------------------------------------------------+
+	sleep 0.1
+	echo -e "                  ANÁLISE DO DIRETÓRIO DE ORIGEM DO BACKUP"
+	echo -e "     +-----------------------------------------------------------------+"
+	sleep 0.1
+	cd $source
+	du -h >$listtemp
+	sed -i 's/\ /§/g' $listtemp
+	tac $listtemp | awk '{print $2}' | sed 's/\.\///g' >$listdir
+	sed -i 1d $listdir
+	sed -i 's/§/\ /g' $listdir
+	sed -i '/^'${exclusion}'/d' $listdir
+	rm -rf $listtemp
+	echo -e "         Criada a lista de diretórios que serão incluídos no backup.\n\n"
+
 }
 # Fase  5 - Cria o backup e registra as ocorrências em Log para possíveis consultas posteriores.
-function_CreateBackup(){
-clear
-		echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                   P O L Í T I C A    D E    B A C K U P\n"
-		echo -e     "                            Executando Backup...\n"
+function_CreateBackup() {
+	#     +-----------------------------------------------------------------+
+	sleep 0.1
+	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
+	echo -e "     +-----------------------------------------------------------------+"
+	sleep 0.1
+	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclusion}""
 
-while IFS= read -r diretorios || [ -n "$diretorios" ]
-	do
-#		echo -e "$diretorios \n"
-		mkdir -p /backup/"$diretorios"
-		chmod 777 /backup/"$diretorios" 
-		name_backup=$(echo "$diretorios" > pwd.txt ;  sed -i 's/\// /g' pwd.txt; cat pwd.txt | awk '{ printf $(NF)}')
+	while IFS= read -r diretorios || [ -n "$diretorios" ]; do
+
+		mkdir -p "${destiny}/${diretorios}"
+		chmod 777 "${destiny}/${diretorios}"
+		name_backup=$(
+			echo "$diretorios" >pwd.txt
+			sed -i 's/\// /g' pwd.txt
+			cat pwd.txt | awk '{ printf $(NF)}'
+		)
 		rm -rf pwd.txt
 		date_backup=$(date +-%d%h%y)
-		cd /dados/"$diretorios"
-		find *.* -type f -print0 |  xargs -0  tar -czf /dados/"$diretorios"/"$name_backup""$date_backup".tar.gz --no-recursion  
-		mv  /dados/"$diretorios"/"$name_backup""$date_backup".tar.gz /backup/"$diretorios"
-done < /dados/diretorios.txt 
-
-rm -rf /dados/diretorios.txt 
-
-
+		cd "${source}/${diretorios}"
+		find *.* -type f -print0 | xargs -0 tar -czf "${source}/${diretorios}"/"$name_backup""$date_backup".tar.gz --no-recursion
+		mv "${source}/${diretorios}"/"$name_backup""$date_backup".tar.gz "${destiny}/${diretorios}"
+	done <$listdir
+	rm -rf $listdir
+	echo -e "                      Backup concluído com sucesso!\n\n"
 }
 # Fase  6 - Envia email(s) para comunicar o status final do backup com os logs anexados.
-function_SendEmail(){
-clear
-		echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                   P O L Í T I C A    D E    B A C K U P\n"
-		echo -e     "                            Enviando email...\n"
-sleep 3
- 
+function_SendEmail() {
+	#     +-----------------------------------------------------------------+
+	sleep 0.1
+	echo -e "              RELATÓRIO DE TODO O PROCESSO DE BACKUP"
+	echo -e "+-----------------------------------------------------------------+"
+	echo -e "          Enviando email com os LOGs do Backup em anexo...\n"
+	sendemail -f infra-ti@altasports.com.br \
+		-t ti3@altasports.com.br \
+		-s email-ssl.com.br:587 \
+		-u "Alerta de Backup" \
+		-m "O $0 realizou backup de "${source}" para "${destiny}" e precisa ser retirado do servidor para liberar espaco em disco!" \
+		-xu ti3@altasports.com.br \
+		-xp '!Q2w#E4r' \
+		-o tls=yes
+	#sleep 3
 }
-# Fase  7 - 
-# Fase  8 - 
-# Fase  9 - 
+# Fase  7 -
+# Fase  8 -
+# Fase  9 -
 # Fase 10 -
 #
 ##############################
 #
-
-#function_ConfigBackup
+function_HeaderDefault
 #function_CheckCRON
-#function_CheckBackupOLD
-#function_CheckSpace
-function_CreateListDestination
+function_CheckParam
+function_CheckSpace
+function_CheckBackupOLD
+function_CreateListDestiny
 function_CreateBackup 2>/dev/null
-#function_SendEmail
+function_SendEmail | sed 's/^/\ \ \ \ \ /g'
