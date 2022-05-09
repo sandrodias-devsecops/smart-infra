@@ -14,22 +14,23 @@
 ##############################
 #
 # Rascunho das Fases
-# Fase  0 - Verifica se os parâmetros informados estão corretos para o processo de backup.
-# Fase  1 - Verifica o existe uma tarefa de backup cadastrada no CRON.
+# Fase  0 - Cria os parâmetros usados no script
+# Fase  1 - Verifica se os parâmetros informados estão corretos para o processo de backup.
 # Fase  2 - Verifica a existência de algum backup anterior que não foi retirado do diretório de destino e indica a liberação de espaço em disco.
 # Fase  3 - Calcula o espaço bruto dos diretórios antes do backup e testa se há espaço suficiente para realizá-lo.
 # Fase  4 - Cria a lista de diretórios(e suas exceções se houver) que serão copiados no processo de backup.
 # Fase  5 - Cria o backup e registra as ocorrências em Log para possíveis consultas posteriores.
 # Fase  6 - Envia email(s) para comunicar o status final do backup com os logs anexados.
-# Fase  7 -
+# Fase  7 - Apenas Calcula o tempo de execução do script de backup
 # Fase  8 -
 # Fase  9 -
 # Fase 10 -
 #
 ##############################
 #
-# Cria os parâmetros usados no script
+# Fase  0 - Cria os parâmetros usados no script
 #
+StartTime=$(date +%s)
 if [ ! $# -gt 0 ]; then
 	clear
 	echo -e "\n Você precisa informar os parâmetros necessários"
@@ -77,9 +78,6 @@ SpaceOldBackup=$(du -sh "${destiny}" | awk '{print $1}')
 ##############################
 #
 # Declaração Variáveis de Resposta
-CheckParam_Source=""${source}" não é um diretório de origem válido."
-CheckParam_Destiny=""${destiny}" não é um diretório de destino válido."
-
 CheckCRON_CompletedStep=
 CheckCRON_FailureStep=
 CheckCRON_RunningStep=
@@ -113,9 +111,12 @@ function_HeaderDefault() {
  	    echo -e "                           SCRIPT  DE  BACKUP\n" # Define o Título do Script
 	
 }
-# Fase  0 - Verifica se os parâmetros informados estão corretos para o processo de backup.
+# Fase  1 - Verifica se os parâmetros informados estão corretos para o processo de backup.
 function_CheckParam() {
 	#     +-----------------------------------------------------------------+
+	CheckParam_Source=""${source}" não é um diretório de origem válido."
+	CheckParam_Destiny=""${destiny}" não é um diretório de destino válido."
+
 	if [ ! -d "${source}" ]; then
 		echo "        "${CheckParam_Source}""
 		exit 1
@@ -127,11 +128,6 @@ function_CheckParam() {
 	else
 		echo > /dev/null
 	fi
-}
-# Fase  1 - Verifica o existe uma tarefa de backup cadastrada no CRON.
-function_CheckCRON() {
-	echo
-	#     +-----------------------------------------------------------------+
 }
 # Fase  2 - Calcula o espaço bruto dos diretórios antes do backup e testa se há espaço suficiente para realizá-lo.
 function_CheckSpace() {
@@ -148,14 +144,11 @@ function_CheckSpace() {
 	sleep 0.1
 	echo -e "         Esp.Dispon : "${AvailableSpace}"\n\n"
 }
-# Fase  3 - Verifica a existência de algum backup anterior que não foi retirado do diretório de destino e indica a liberação de espaço em disco.
+# Fase  2 - Verifica a existência de algum backup anterior que não foi retirado do diretório de destino e indica a liberação de espaço em disco.
 function_CheckBackupOLD() {
 	#     +-----------------------------------------------------------------+
 CheckBackupOLD=$(ls "${destiny}" | wc -l)
 if [ ! "${CheckBackupOLD}" -eq 0 ]; then
-		#echo -e "        O diretório "${destiny}"\n        contém o backup anterior, primeiro mova os dados\n        pra liberar espaço em disco e reinicie o processo\n        de backup."
-		#EmailEspaceDisc="O $0 não realizou backup de "${source}" para "${destiny}" pois o backup anterior precisa ser retirado do servidor para liberar espaco em disco!"
-	    #exit 1
 	sleep 0.1
 	echo -e "                      DICA DE OTIMIZAÇÃO DO ESPAÇO EM DISCO"
 	echo -e "     +-----------------------------------------------------------------+"
@@ -209,7 +202,13 @@ function_CreateBackup() {
 		mv "${source}/${diretorios}"/"$name_backup""$date_backup".tar.gz "${destiny}/${diretorios}"
 	done <$listdir
 	rm -rf $listdir
-	echo -e "                      Backup concluído com sucesso!\n\n"
+	SizeBackup=$(du -sh "${destiny}" | awk '{print $1}')
+	EndTime=$(date +%s)
+	CalcTime=$(expr $EndTime - $StartTime)
+	ResultTime=$(expr 10800 + $CalcTime)
+	TotalTime=`date -d @$ResultTime +%H"Hrs "%M"Min "%S"Seg"`
+	echo -e "          Backup concluído após $TotalTime gerando $SizeBackup de dados.\n\n"  | sed 's/00Hrs //;s/00Min //'
+
 }
 # Fase  6 - Envia email(s) para comunicar o status final do backup com os logs anexados.
 function_SendEmail() {
@@ -229,7 +228,7 @@ function_SendEmail() {
 		-o message-charset=UTF-8
 	#sleep 3
 }
-# Fase  7 -
+# Fase  7 - 
 # Fase  8 -
 # Fase  9 -
 # Fase 10 -
@@ -237,7 +236,6 @@ function_SendEmail() {
 ##############################
 #
 function_HeaderDefault
-#function_CheckCRON
 function_CheckParam
 function_CheckSpace
 function_CheckBackupOLD
