@@ -8,8 +8,8 @@
 #
 # Caminho Absoluto: /smart-infra/backup-custom.sh
 # Função: Criar backups com o conteúdo de diretórios ignorando seus subdiretórios
-# Atualizado em: 05/05/2022
-# Versao: 0.4
+# Atualizado em: 07/05/2022
+# Versao: 0.7
 #
 ##############################
 #
@@ -226,6 +226,7 @@ function_SendEmail() {
 		-xu ti3@altasports.com.br \
 		-xp '!Q2w#E4r' \
 		-o tls=yes
+		-o message-charset=UTF-8
 	#sleep 3
 }
 # Fase  7 -
@@ -242,4 +243,4 @@ function_CheckSpace
 function_CheckBackupOLD
 function_CreateListDestiny
 function_CreateBackup 2>/dev/null
-function_SendEmail | sed 's/^/\ \ \ \ \ /g'
+#function_SendEmail | sed 's/^/\ \ \ \ \ /g'
