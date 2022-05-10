@@ -31,25 +31,35 @@
 # Fase  0 - Cria os parâmetros usados no script
 #
 StartTime=$(date +%s)
+today=$(date '+%A')
 if [ ! $# -gt 0 ]; then
 	clear
+	echo -e "\n DICAS DE USO DO $0."
 	echo -e "\n Você precisa informar os parâmetros necessários"
 	echo -e "\nPara Origem   : -s + "/diretorio_origem""
 	echo -e "Para Destino  : -d + "/diretorio_destino""
 	echo -e "Para Exclusão : -e + "/diretorio_excluido"\n"
-	echo -e "\nEXEMPLO: sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
-
+	echo -e "Para Backup Incremental : -i, sem o -i o Backup será Completo."
+	echo -e "\nEXEMPLO:\n "\$\:\>" sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
+	exit 1
 else
-	while getopts hs:d:e: option; do
+	while getopts his:d:e: option; do
 		case "${option}" in
 
 		h)
 			clear
+			echo -e "\n DICAS DE USO DO $0."
 			echo -e "\n Você precisa informar os parâmetros necessários"
 			echo -e "\nPara Origem   : -s + "/diretorio_origem""
 			echo -e "Para Destino  : -d + "/diretorio_destino""
 			echo -e "Para Exclusão : -e + "/diretorio_excluido"\n"
-			echo -e "\nEXEMPLO: sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
+			echo -e "Para Backup Incremental : -i, sem o -i o Backup será Completo.\n"
+			echo -e "\nEXEMPLO:\n "\$\:\>" sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
+			exit 0
+			;;
+		i)
+			Incremental="1"
+			yesterday=$(date '+%A' -d '-1 day')
 			;;
 		s)
 			source=${OPTARG}
@@ -65,6 +75,7 @@ else
 		esac
 	done
 fi
+
 #
 ##############################
 #
@@ -169,10 +180,10 @@ function_CreateListDestiny() {
 	cd $source
 	du -h >$listtemp
 	sed -i 's/\ /§/g' $listtemp
-	tac $listtemp | awk '{print $2}' | sed 's/\.\///g' >$listdir
+	tac $listtemp | awk '{print $2}' | sed 's/\.\///g' > $listdir
 	sed -i 1d $listdir
 	sed -i 's/§/\ /g' $listdir
-	sed -i '/^'${exclusion}'/d' $listdir
+	sed -i '/^'${exclusion:=Omitido}'/d' $listdir
 	rm -rf $listtemp
 	echo -e "         Criada a lista de diretórios que serão incluídos no backup.\n\n"
 
@@ -184,23 +195,38 @@ function_CreateBackup() {
 	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
-	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclusion}""
+	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclusion:=Omitido}""
 
-	while IFS= read -r diretorios || [ -n "$diretorios" ]; do
-
-		mkdir -p "${destiny}/${diretorios}"
-		chmod 777 "${destiny}/${diretorios}"
-		name_backup=$(
-			echo "$diretorios" >pwd.txt
-			sed -i 's/\// /g' pwd.txt
-			cat pwd.txt | awk '{ printf $(NF)}'
-		)
-		rm -rf pwd.txt
-		date_backup=$(date +-%d%h%y)
-		cd "${source}/${diretorios}"
-		find *.* -type f -print0 | xargs -0 tar -czf "${source}/${diretorios}"/"$name_backup""$date_backup".tar.gz --no-recursion
-		mv "${source}/${diretorios}"/"$name_backup""$date_backup".tar.gz "${destiny}/${diretorios}"
-	done <$listdir
+	if [ ! $Incremental -eq 1 ]; then
+		while IFS= read -r diretorios || [ -n "$diretorios" ]; do
+			mkdir -p "${destiny}/${today^}/${diretorios}"
+			chmod 777 "${destiny}/${today^}/${diretorios}"
+			name_backupC=$(
+				echo "$diretorios" >pwd.txt
+				sed -i 's/\// /g' pwd.txt
+				cat pwd.txt | awk '{ printf $(NF)}'
+				) 
+			rm -rf pwd.txt
+			date_backup=$(date +-%d%h%y)
+			cd "${source}/${diretorios}"
+			find *.* -type f -print0 | xargs -0 tar -czf "${source}/${diretorios}/${name_backupC}"-Completo-"${date_backup}".tar.gz --no-recursion
+			mv "${source}/${diretorios}"/"$name_backupC""$date_backup".tar.gz "${destiny}/${today^}/${diretorios}"
+		done <$listdir
+	else
+		while IFS= read -r diretorios || [ -n "$diretorios" ]; do
+			mkdir -p "${destiny}/${yesterday^}/${diretorios}"
+			chmod 777 "${destiny}/${yesterday^}/${diretorios}"
+			name_backupI=$(
+				echo "$diretorios" >pwd.txt
+				sed -i 's/\// /g' pwd.txt
+				cat pwd.txt | awk '{ printf $(NF)}'
+				)
+			rm -rf pwd.txt
+			date_backup=$(date +-%d%h%y)
+			cd "${source}/${diretorios}"
+			find *.* -mtime -1 -ls f -print0 | xargs -0 tar -czf "${destiny}/${yesterday^}/${diretorios}/${name_backupI}"-Incremental-"{$date_backup}".tar.gz --no-recursion
+		done <$listdir
+	fi
 	rm -rf $listdir
 	SizeBackup=$(du -sh "${destiny}" | awk '{print $1}')
 	EndTime=$(date +%s)
@@ -208,7 +234,6 @@ function_CreateBackup() {
 	ResultTime=$(expr 10800 + $CalcTime)
 	TotalTime=`date -d @$ResultTime +%H"Hrs "%M"Min "%S"Seg"`
 	echo -e "          Backup concluído após $TotalTime gerando $SizeBackup de dados.\n\n"  | sed 's/00Hrs //;s/00Min //'
-
 }
 # Fase  6 - Envia email(s) para comunicar o status final do backup com os logs anexados.
 function_SendEmail() {
@@ -228,6 +253,7 @@ function_SendEmail() {
 		-o message-charset=UTF-8
 	#sleep 3
 }
+
 # Fase  7 - 
 # Fase  8 -
 # Fase  9 -
