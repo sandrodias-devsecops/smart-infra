@@ -36,7 +36,7 @@ InverteCorPiscando="\e[5;36;40m"
 EndCollor="\e[0m"
 if [ ! $# -gt 0 ]; then
 	clear
-	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${InverteCorPiscando}$0 -h${FechaCor}"
+	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${InverteCorPiscando}$0 -h${EndCollor}"
 	exit 1
 else
 	while getopts his:d:e: option; do
