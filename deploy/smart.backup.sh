@@ -32,15 +32,11 @@
 #
 StartTime=$(date +%s)
 today=$(date '+%A')
+InverteCorPiscando="\e[5;36;40m"
+FechaCor="\e[0m"
 if [ ! $# -gt 0 ]; then
 	clear
-	echo -e "\n DICAS DE USO DO $0."
-	echo -e "\n Você precisa informar os parâmetros necessários"
-	echo -e "\nPara Origem   : -s + "/diretorio_origem""
-	echo -e "Para Destino  : -d + "/diretorio_destino""
-	echo -e "Para Exclusão : -e + "/diretorio_excluido"\n"
-	echo -e "Para Backup Incremental : -i, sem o -i o Backup será Completo."
-	echo -e "\nEXEMPLO:\n "\$\:\>" sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
+	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${InverteCorPiscando}$0 -h${FechaCor}"
 	exit 1
 else
 	while getopts his:d:e: option; do
@@ -49,11 +45,12 @@ else
 		h)
 			clear
 			echo -e "\n DICAS DE USO DO $0."
-			echo -e "\n Você precisa informar os parâmetros necessários"
-			echo -e "\nPara Origem   : -s + "/diretorio_origem""
-			echo -e "Para Destino  : -d + "/diretorio_destino""
-			echo -e "Para Exclusão : -e + "/diretorio_excluido"\n"
-			echo -e "Para Backup Incremental : -i, sem o -i o Backup será Completo.\n"
+			echo -e "\n Você precisa informar os parâmetros obrigatórios."
+			echo -e " Para Origem   : -s + "/diretorio_origem""
+			echo -e " Para Destino  : -d + "/diretorio_destino""
+			echo -e " Para Exclusão : -e + "/diretorio_excluido""
+			echo -e "\n Já os parâmetros opcionais são usados de acordo com o cenário."
+			echo -e " Para Backup Incremental : -i, sem o -i o Backup será Completo."
 			echo -e "\nEXEMPLO:\n "\$\:\>" sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
 			exit 0
 			;;
@@ -118,23 +115,23 @@ SendEmail_RunningStep=
 # Funções usadas nas Fases
 function_HeaderDefault() {
 	clear
-	echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                         S M A R T     I N F R A"
+	echo -e "${InverteCorPiscando}\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                         S M A R T     I N F R A"
  	    echo -e "                           SCRIPT  DE  BACKUP\n" # Define o Título do Script
 	
 }
 # Fase  1 - Verifica se os parâmetros informados estão corretos para o processo de backup.
 function_CheckParam() {
 	#     +-----------------------------------------------------------------+
-	CheckParam_Source=""${source}" não é um diretório de origem válido."
-	CheckParam_Destiny=""${destiny}" não é um diretório de destino válido."
+	CheckParam_Source="Você precisa informar a opção -s seguido de um diretório de origem válido."
+	CheckParam_Destiny="Você precisa informar a opção -d seguido de um diretório de destino válido."
 
 	if [ ! -d "${source}" ]; then
-		echo "        "${CheckParam_Source}""
+		echo " "${CheckParam_Source}""
 		exit 1
 	elif
 		[ ! -d "${destiny}" ]
 	then
-		echo "        "${CheckParam_Destiny}""
+		echo " "${CheckParam_Destiny}""
 		exit 1
 	else
 		echo > /dev/null
@@ -196,9 +193,10 @@ function_CreateBackup() {
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
 	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclusion:=Omitido}""
-
+	
+	date_backup=$(date +-%d%h%y)
 	if [ ! $Incremental -eq 1 ]; then
-		while IFS= read -r diretorios || [ -n "$diretorios" ]; do
+		while IFS= read -r diretorios || [ -n "${diretorios}" ]; do
 			mkdir -p "${destiny}/${today^}/${diretorios}"
 			chmod 777 "${destiny}/${today^}/${diretorios}"
 			name_backupC=$(
@@ -207,10 +205,9 @@ function_CreateBackup() {
 				cat pwd.txt | awk '{ printf $(NF)}'
 				) 
 			rm -rf pwd.txt
-			date_backup=$(date +-%d%h%y)
 			cd "${source}/${diretorios}"
-			find *.* -type f -print0 | xargs -0 tar -czf "${source}/${diretorios}/${name_backupC}"-Completo-"${date_backup}".tar.gz --no-recursion
-			mv "${source}/${diretorios}"/"$name_backupC""$date_backup".tar.gz "${destiny}/${today^}/${diretorios}"
+			find *.* -type f -print0 | xargs -0 tar -czf "${source}"/"${diretorios}"/"${name_backupC}"-Completo-"${date_backup}".tar.gz --no-recursion
+			mv "${source}"/"${diretorios}"/"${name_backupC}"-Completo-"${date_backup}".tar.gz "${destiny}/${today^}/${diretorios}"
 		done <$listdir
 	else
 		while IFS= read -r diretorios || [ -n "$diretorios" ]; do
@@ -222,7 +219,6 @@ function_CreateBackup() {
 				cat pwd.txt | awk '{ printf $(NF)}'
 				)
 			rm -rf pwd.txt
-			date_backup=$(date +-%d%h%y)
 			cd "${source}/${diretorios}"
 			find *.* -mtime -1 -ls f -print0 | xargs -0 tar -czf "${destiny}/${yesterday^}/${diretorios}/${name_backupI}"-Incremental-"{$date_backup}".tar.gz --no-recursion
 		done <$listdir
@@ -261,10 +257,10 @@ function_SendEmail() {
 #
 ##############################
 #
-function_HeaderDefault
-function_CheckParam
-function_CheckSpace
-function_CheckBackupOLD
-function_CreateListDestiny
-function_CreateBackup 2>/dev/null
+function_HeaderDefault 
+#function_CheckParam
+#function_CheckSpace
+#function_CheckBackupOLD
+#function_CreateListDestiny
+#function_CreateBackup 2>/dev/null
 #function_SendEmail | sed 's/^/\ \ \ \ \ /g'
