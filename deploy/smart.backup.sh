@@ -33,7 +33,7 @@
 StartTime=$(date +%s)
 today=$(date '+%A')
 InverteCorPiscando="\e[5;36;40m"
-FechaCor="\e[0m"
+EndCollor="\e[0m"
 if [ ! $# -gt 0 ]; then
 	clear
 	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${InverteCorPiscando}$0 -h${FechaCor}"
