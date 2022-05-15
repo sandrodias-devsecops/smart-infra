@@ -31,9 +31,10 @@
 # Fase  0 - Cria os parâmetros usados no script
 #
 StartTime=$(date +%s)
-today=$(date '+%A')
 InverteCorPiscando="\e[5;36;40m"
 EndCollor="\e[0m"
+Incremental="0"
+
 if [ ! $# -gt 0 ]; then
 	clear
 	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${InverteCorPiscando}$0 -h${EndCollor}"
@@ -186,43 +187,59 @@ function_CreateListDestiny() {
 
 }
 # Fase  5 - Cria o backup e registra as ocorrências em Log para possíveis consultas posteriores.
-function_CreateBackup() {
+function_CreateBackupComplete() {
 	#     +-----------------------------------------------------------------+
 	sleep 0.1
 	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
 	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclusion:=Omitido}""
-	
+	today=$(date '+%A')	
 	date_backup=$(date +-%d%h%y)
-	if [ ! $Incremental -eq 1 ]; then
-		while IFS= read -r diretorios || [ -n "${diretorios}" ]; do
-			mkdir -p "${destiny}/${today^}/${diretorios}"
-			chmod 777 "${destiny}/${today^}/${diretorios}"
-			name_backupC=$(
-				echo "$diretorios" >pwd.txt
-				sed -i 's/\// /g' pwd.txt
-				cat pwd.txt | awk '{ printf $(NF)}'
-				) 
-			rm -rf pwd.txt
-			cd "${source}/${diretorios}"
-			find *.* -type f -print0 | xargs -0 tar -czf "${source}"/"${diretorios}"/"${name_backupC}"-Completo-"${date_backup}".tar.gz --no-recursion
-			mv "${source}"/"${diretorios}"/"${name_backupC}"-Completo-"${date_backup}".tar.gz "${destiny}/${today^}/${diretorios}"
-		done <$listdir
-	else
-		while IFS= read -r diretorios || [ -n "$diretorios" ]; do
-			mkdir -p "${destiny}/${yesterday^}/${diretorios}"
-			chmod 777 "${destiny}/${yesterday^}/${diretorios}"
-			name_backupI=$(
-				echo "$diretorios" >pwd.txt
-				sed -i 's/\// /g' pwd.txt
-				cat pwd.txt | awk '{ printf $(NF)}'
-				)
-			rm -rf pwd.txt
-			cd "${source}/${diretorios}"
-			find *.* -mtime -1 -ls f -print0 | xargs -0 tar -czf "${destiny}/${yesterday^}/${diretorios}/${name_backupI}"-Incremental-"{$date_backup}".tar.gz --no-recursion
-		done <$listdir
-	fi
+	while IFS= read -r diretorios || [ -n "${diretorios}" ]; do
+		mkdir -p "${destiny}/${today^}/${diretorios}"
+		chmod 777 "${destiny}/${today^}/${diretorios}"
+		name_backup=$(
+			echo "$diretorios" >pwd.txt
+			sed -i 's/\// /g' pwd.txt
+			cat pwd.txt | awk '{ printf $(NF)}'
+			) 
+		rm -rf pwd.txt
+		cd "${source}/${diretorios}"
+		find *.* -type f -print0 | xargs -0 tar -czf "${source}"/"${diretorios}"/"${name_backup}"-Completo-"${date_backup}".tar.gz --no-recursion
+		mv "${source}"/"${diretorios}"/"${name_backup}"-Completo-"${date_backup}".tar.gz "${destiny}/${today^}/${diretorios}"
+	done <$listdir
+		rm -rf $listdir
+	yesterday
+	SizeBackup=$(du -sh "${destiny}" | awk '{print $1}')
+	EndTime=$(date +%s)
+	CalcTime=$(expr $EndTime - $StartTime)
+	ResultTime=$(expr 10800 + $CalcTime)
+	TotalTime=`date -d @$ResultTime +%H"Hrs "%M"Min "%S"Seg"`
+	echo -e "          Backup concluído após $TotalTime gerando $SizeBackup de dados.\n\n"  | sed 's/00Hrs //;s/00Min //'
+}
+function_CreateBackupIncremental() {
+	#     +-----------------------------------------------------------------+
+	sleep 0.1
+	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
+	echo -e "     +-----------------------------------------------------------------+"
+	sleep 0.1
+	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclusion:=Omitido}""
+	yesterday=$( date '+%A' -d '-1 day' )
+	date_backup=$(date +-%d%h%y)
+	while IFS= read -r diretorios || [ -n "$diretorios" ]; do
+		mkdir -p "${destiny}/${yesterday^}/${diretorios}"
+		chmod 777 "${destiny}/${yesterday^}/${diretorios}"
+		name_backup=$(
+			echo "$diretorios" >pwd.txt
+			sed -i 's/\// /g' pwd.txt
+			cat pwd.txt | awk '{ printf $(NF)}'
+			)
+		rm -rf pwd.txt
+		cd "${source}/${diretorios}"
+		find *.* -type f -mtime 1 -print0 | xargs -0 tar -czf "${source}"/"${diretorios}"/"${name_backup}"-Incremental-"${date_backup}".tar.gz --no-recursion
+		mv "${source}"/"${diretorios}"/"${name_backup}"-Incremental-"${date_backup}".tar.gz "${destiny}/${yesterday^}/${diretorios}"
+	done <$listdir
 	rm -rf $listdir
 	SizeBackup=$(du -sh "${destiny}" | awk '{print $1}')
 	EndTime=$(date +%s)
@@ -258,9 +275,13 @@ function_SendEmail() {
 ##############################
 #
 function_HeaderDefault 
-#function_CheckParam
-#function_CheckSpace
-#function_CheckBackupOLD
-#function_CreateListDestiny
-#function_CreateBackup 2>/dev/null
+function_CheckParam
+function_CheckSpace
+function_CheckBackupOLD
+function_CreateListDestiny
+if [ ! $Incremental -eq 1 ]; then
+	function_CreateBackupComplete 2>/dev/null
+else
+	function_CreateBackupIncremental 2>/dev/null
+fi
 #function_SendEmail | sed 's/^/\ \ \ \ \ /g'
