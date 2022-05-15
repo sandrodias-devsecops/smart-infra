@@ -34,10 +34,10 @@ StartTime=$(date +%s)
 InverteCorPiscando="\e[5;36;40m"
 EndCollor="\e[0m"
 Incremental="0"
-
+appname=$(echo  $0 | sed 's@/smart-infra/deploy/@@' )
 if [ ! $# -gt 0 ]; then
 	clear
-	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${InverteCorPiscando}$0 -h${EndCollor}"
+	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${InverteCorPiscando}$appname -h${EndCollor}"
 	exit 1
 else
 	while getopts his:d:e: option; do
@@ -45,14 +45,14 @@ else
 
 		h)
 			clear
-			echo -e "\n DICAS DE USO DO $0."
+			echo -e "\n DICAS DE USO DO $appname."
 			echo -e "\n Você precisa informar os parâmetros obrigatórios."
 			echo -e " Para Origem   : -s + "/diretorio_origem""
 			echo -e " Para Destino  : -d + "/diretorio_destino""
 			echo -e " Para Exclusão : -e + "/diretorio_excluido""
 			echo -e "\n Já os parâmetros opcionais são usados de acordo com o cenário."
 			echo -e " Para Backup Incremental : -i, sem o -i o Backup será Completo."
-			echo -e "\nEXEMPLO:\n "\$\:\>" sudo $0 -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
+			echo -e "\nEXEMPLO:\n "\$\:\>" sudo $appname -s /diretorio_origem -d /diretorio_destino -e /diretorio_excluido\n"
 			exit 0
 			;;
 		i)
@@ -68,7 +68,7 @@ else
 			destiny=${OPTARG}
 			;;
 		e)
-			exclusion=${OPTARG}
+			exclude=${OPTARG}
 			;;
 		esac
 	done
@@ -181,7 +181,7 @@ function_CreateListDestiny() {
 	tac $listtemp | awk '{print $2}' | sed 's/\.\///g' > $listdir
 	sed -i 1d $listdir
 	sed -i 's/§/\ /g' $listdir
-	sed -i '/^'${exclusion:=Omitido}'/d' $listdir
+	sed -i '/^'${exclude:=Omitido}'/d' $listdir
 	rm -rf $listtemp
 	echo -e "         Criada a lista de diretórios que serão incluídos no backup.\n\n"
 
@@ -193,7 +193,7 @@ function_CreateBackupComplete() {
 	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
-	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclusion:=Omitido}""
+	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
 	today=$(date '+%A')	
 	date_backup=$(date +-%d%h%y)
 	while IFS= read -r diretorios || [ -n "${diretorios}" ]; do
@@ -210,7 +210,6 @@ function_CreateBackupComplete() {
 		mv "${source}"/"${diretorios}"/"${name_backup}"-Completo-"${date_backup}".tar.gz "${destiny}/${today^}/${diretorios}"
 	done <$listdir
 		rm -rf $listdir
-	yesterday
 	SizeBackup=$(du -sh "${destiny}" | awk '{print $1}')
 	EndTime=$(date +%s)
 	CalcTime=$(expr $EndTime - $StartTime)
@@ -224,7 +223,7 @@ function_CreateBackupIncremental() {
 	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
-	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclusion:=Omitido}""
+	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
 	yesterday=$( date '+%A' -d '-1 day' )
 	date_backup=$(date +-%d%h%y)
 	while IFS= read -r diretorios || [ -n "$diretorios" ]; do
@@ -246,7 +245,7 @@ function_CreateBackupIncremental() {
 	CalcTime=$(expr $EndTime - $StartTime)
 	ResultTime=$(expr 10800 + $CalcTime)
 	TotalTime=`date -d @$ResultTime +%H"Hrs "%M"Min "%S"Seg"`
-	echo -e "          Backup concluído após $TotalTime gerando $SizeBackup de dados.\n\n"  | sed 's/00Hrs //;s/00Min //'
+	echo -e "        Backup Incremental concluído após $TotalTime gerando $SizeBackup de dados.\n\n"  | sed 's/00Hrs //;s/00Min //'
 }
 # Fase  6 - Envia email(s) para comunicar o status final do backup com os logs anexados.
 function_SendEmail() {
@@ -259,7 +258,7 @@ function_SendEmail() {
 		-t ti3@altasports.com.br \
 		-s email-ssl.com.br:587 \
 		-u "Alerta de Backup" \
-		-m "O $0 realizou backup de "${source}" para "${destiny}" e precisa ser retirado do servidor para liberar espaco em disco!" \
+		-m "O $appname realizou backup de "${source}" para "${destiny}" e precisa ser retirado do servidor para liberar espaco em disco!" \
 		-xu ti3@altasports.com.br \
 		-xp '!Q2w#E4r' \
 		-o tls=yes
