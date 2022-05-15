@@ -8,36 +8,78 @@
 #
 # Caminho Absoluto: /smart-infra/backup-custom.sh
 # Função: Criar backups com o conteúdo de diretórios ignorando seus subdiretórios
-# Atualizado em: 07/05/2022
-# Versao: 0.7
+# Atualizado em: 15/05/2022
+# Versao: 1.1
 #
 ##############################
 #
-# Rascunho das Fases
-# Fase  0 - Cria os parâmetros usados no script
-# Fase  1 - Verifica se os parâmetros informados estão corretos para o processo de backup.
-# Fase  2 - Verifica a existência de algum backup anterior que não foi retirado do diretório de destino e indica a liberação de espaço em disco.
-# Fase  3 - Calcula o espaço bruto dos diretórios antes do backup e testa se há espaço suficiente para realizá-lo.
-# Fase  4 - Cria a lista de diretórios(e suas exceções se houver) que serão copiados no processo de backup.
-# Fase  5 - Cria o backup e registra as ocorrências em Log para possíveis consultas posteriores.
-# Fase  6 - Envia email(s) para comunicar o status final do backup com os logs anexados.
-# Fase  7 - Apenas Calcula o tempo de execução do script de backup
-# Fase  8 -
-# Fase  9 -
-# Fase 10 -
+# Declaração Variáveis
 #
-##############################
-#
-# Fase  0 - Cria os parâmetros usados no script
-#
+UncompressedSize=$(du -sh "${source}" | awk '{print $1}')
+AvailableSpace=$(df -h "${destiny}" | awk '{print $4}' | sed 1d)
+PartitionSpace=$(df -h "${destiny}" | awk '{print $1}' | sed 1d)
+SpaceOldBackup=$(du -sh "${destiny}" | awk '{print $1}')
 StartTime=$(date +%s)
-InverteCorPiscando="\e[5;36;40m"
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# TABELA DE CÓDIGOS
+#
+# EFEITO NO TEXTO 
+  Effect-Normal=0    # EFEITO DE NORMAL
+  Effect-Bold=1      # EFEITO DE NEGRITO
+  Effect-Light=2     # EFEITO DE BAIXA INTENSID
+  Effect-Italic=3    # EFEITO DE ITALICO
+  Effect-Underline=4 # EFEITO DE SUBLINHADO
+  Effect-Blink=5     # EFEITO DE PISCANDO
+  Effect-FastBlink=6 # EFEITO DE PISCA RAPIDO
+  Effect-Invert=7    # EFEITO DE INVERSO
+  Effect-Invisible=8 # EFEITO DE INVISIVEL
+#
+# COR DO TEXTO
+  FG-Black=30   # COR DO TEXTO PRETO
+  FG-Red=31     # COR DO TEXTO VERMELHO
+  FG-Green=32   # COR DO TEXTO VERDE
+  FG-Yellow=33  # COR DO TEXTO AMARELO
+  FG-Blue=34    # COR DO TEXTO AZUL
+  FG-Magenta=35 # COR DO TEXTO MAGENTA
+  FG-Cyan=36    # COR DO TEXTO CIANO
+  FG-White=37   # COR DO TEXTO BRANCO
+#
+# COR DO FUNDO
+  BG-Black=40   # COR DO FUNDO PRETO
+  BG-Red=41     # COR DO FUNDO VERMELHO
+  BG-Green=42   # COR DO FUNDO VERDE
+  BG-Yellow=43  # COR DO FUNDO AMARELO
+  BG-Blue=44    # COR DO FUNDO AZUL
+  BG-Magenta=45 # COR DO FUNDO MAGENTA
+  BG-Cyan=46    # COR DO FUNDO CIANO
+  BG-White=47   # COR DO FUNDO BRANCO
+#
+# TEMAS PRE DEFINIDOS
+  ALERT-ERROR-Blink-Red-White="\e["${Effect-Blink}";"${FG-Red};"${BG-White}m"
+  ALERT-ERROR-Blink-Black-White="\e["${Effect-Blink}";"${FG-Black};"${BG-White}m"
+  ALERT-ERROR-Blink-White-Red="\e["${Effect-Blink}";"${FG-White};"${BG-Red}m"
+  ALERT-ERROR-Blink-Black-Red="\e["${Effect-Blink}";"${FG-Black};"${BG-Red}m"
+  NOTICE-="\e["${Effect-}";"${FG};"${BG-}m"
+  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
+  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
+  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
+  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
+  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
+  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
+
+# ENCERRA FORMATAÇÃO DO TEXTO
 EndCollor="\e[0m"
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 Incremental="0"
 appname=$(echo  $0 | sed 's@/smart-infra/deploy/@@' )
+#
+##############################
+#
+# Fase  0 - Cria os parâmetros usados no script
+#
 if [ ! $# -gt 0 ]; then
 	clear
-	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${InverteCorPiscando}$appname -h${EndCollor}"
+	echo -e "\n ERRO: Falta de parâmetros.\n Acrescente o -h para ajuda básica do script.\n\n EXEMPLO:\n "\$\:\>" ${StartCollor}$appname -h${EndCollor}"
 	exit 1
 else
 	while getopts his:d:e: option; do
@@ -77,20 +119,7 @@ fi
 #
 ##############################
 #
-# Declaração Variáveis
-#
-UncompressedSize=$(du -sh "${source}" | awk '{print $1}')
-AvailableSpace=$(df -h "${destiny}" | awk '{print $4}' | sed 1d)
-PartitionSpace=$(df -h "${destiny}" | awk '{print $1}' | sed 1d)
-SpaceOldBackup=$(du -sh "${destiny}" | awk '{print $1}')
-#
-##############################
-#
 # Declaração Variáveis de Resposta
-CheckCRON_CompletedStep=
-CheckCRON_FailureStep=
-CheckCRON_RunningStep=
-
 CheckBackupOLD_CompletedStep=
 CheckBackupOLD_FailureStep=
 CheckBackupOLD_RunningStep=
@@ -116,7 +145,7 @@ SendEmail_RunningStep=
 # Funções usadas nas Fases
 function_HeaderDefault() {
 	clear
-	echo -e "${InverteCorPiscando}\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                         S M A R T     I N F R A"
+	echo -e "\n\n     +-----------------------------------------------------------------+\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     │░░░░░░░ A  L  T  A        --- = ---     S  P  O  R  T  S ░░░░░░░░│\n     │░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│\n     +-----------------------------------------------------------------+\n                         S M A R T     I N F R A"
  	    echo -e "                           SCRIPT  DE  BACKUP\n" # Define o Título do Script
 	
 }
@@ -193,7 +222,7 @@ function_CreateBackupComplete() {
 	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
-	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
+	echo -e "                        ${StartCollor}Criando Backup Completo...${EndCollor}\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
 	today=$(date '+%A')	
 	date_backup=$(date +-%d%h%y)
 	while IFS= read -r diretorios || [ -n "${diretorios}" ]; do
@@ -223,7 +252,7 @@ function_CreateBackupIncremental() {
 	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
-	echo -e "                             Criando Backup...\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
+	echo -e "                      ${StartCollor}Criando Backup Incremental...${EndCollor}\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
 	yesterday=$( date '+%A' -d '-1 day' )
 	date_backup=$(date +-%d%h%y)
 	while IFS= read -r diretorios || [ -n "$diretorios" ]; do
@@ -245,7 +274,7 @@ function_CreateBackupIncremental() {
 	CalcTime=$(expr $EndTime - $StartTime)
 	ResultTime=$(expr 10800 + $CalcTime)
 	TotalTime=`date -d @$ResultTime +%H"Hrs "%M"Min "%S"Seg"`
-	echo -e "        Backup Incremental concluído após $TotalTime gerando $SizeBackup de dados.\n\n"  | sed 's/00Hrs //;s/00Min //'
+	echo -e "      Backup Incremental concluído após $TotalTime gerando $SizeBackup de dados.\n\n"  | sed 's/00Hrs //;s/00Min //'
 }
 # Fase  6 - Envia email(s) para comunicar o status final do backup com os logs anexados.
 function_SendEmail() {
@@ -257,7 +286,7 @@ function_SendEmail() {
 	sendemail -f infra-ti@altasports.com.br \
 		-t ti3@altasports.com.br \
 		-s email-ssl.com.br:587 \
-		-u "Alerta de Backup" \
+		-u "ALERT-ERRORa de Backup" \
 		-m "O $appname realizou backup de "${source}" para "${destiny}" e precisa ser retirado do servidor para liberar espaco em disco!" \
 		-xu ti3@altasports.com.br \
 		-xp '!Q2w#E4r' \
