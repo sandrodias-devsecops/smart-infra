@@ -1880,7 +1880,7 @@ def shell():
     else:
         callback = print_dots(shutdown_event)
 
-    printer('Retrieving speedtest.net configuration...', quiet)
+    printer('Recuperando a configuração do speedtest.net...', quiet)
     try:
         speedtest = Speedtest(
             source_address=args.source,
@@ -1888,14 +1888,14 @@ def shell():
             secure=args.secure
         )
     except (ConfigRetrievalError,) + HTTP_ERRORS:
-        printer('Cannot retrieve speedtest configuration', error=True)
+        printer('Não é possível recuperar a configuração do teste de velocidade', error=True)
         raise SpeedtestCLIError(get_exception())
 
     if args.list:
         try:
             speedtest.get_servers()
         except (ServersRetrievalError,) + HTTP_ERRORS:
-            printer('Cannot retrieve speedtest server list', error=True)
+            printer('Não é possível recuperar a lista de servidores de teste de velocidade', error=True)
             raise SpeedtestCLIError(get_exception())
 
         for _, servers in sorted(speedtest.servers.items()):
@@ -1910,42 +1910,42 @@ def shell():
                         raise
         sys.exit(0)
 
-    printer('Testing from %(isp)s (%(ip)s)...' % speedtest.config['client'],
+    printer('Testando %(isp)s (%(ip)s)...' % speedtest.config['client'],
             quiet)
 
     if not args.mini:
-        printer('Retrieving speedtest.net server list...', quiet)
+        printer('Recuperando a lista de servidores speedtest.net...', quiet)
         try:
             speedtest.get_servers(servers=args.server, exclude=args.exclude)
         except NoMatchedServers:
             raise SpeedtestCLIError(
-                'No matched servers: %s' %
+                'Nenhum servidor correspondente: %s' %
                 ', '.join('%s' % s for s in args.server)
             )
         except (ServersRetrievalError,) + HTTP_ERRORS:
-            printer('Cannot retrieve speedtest server list', error=True)
+            printer('Não é possível recuperar a lista de servidores de teste de velocidade', error=True)
             raise SpeedtestCLIError(get_exception())
         except InvalidServerIDType:
             raise SpeedtestCLIError(
-                '%s is an invalid server type, must '
+                '%s é um tipo de servidor inválido, deve '
                 'be an int' % ', '.join('%s' % s for s in args.server)
             )
 
         if args.server and len(args.server) == 1:
-            printer('Retrieving information for the selected server...', quiet)
+            printer('Recuperando informações para o servidor selecionado...', quiet)
         else:
-            printer('Selecting best server based on ping...', quiet)
+            printer('Selecionando o melhor servidor com base no ping...', quiet)
         speedtest.get_best_server()
     elif args.mini:
         speedtest.get_best_server(speedtest.set_mini_server(args.mini))
 
     results = speedtest.results
 
-    printer('Hosted by %(sponsor)s (%(name)s) [%(d)0.2f km]: '
+    printer('Hospedado por %(sponsor)s (%(name)s) [%(d)0.2f km]: '
             '%(latency)s ms' % results.server, quiet)
 
     if args.download:
-        printer('Testing download speed', quiet,
+        printer('Testando a velocidade de download', quiet,
                 end=('', '\n')[bool(debug)])
         speedtest.download(
             callback=callback,
@@ -1956,10 +1956,10 @@ def shell():
                  args.units[0]),
                 quiet)
     else:
-        printer('Skipping download test', quiet)
+        printer('Ignorando o teste de download', quiet)
 
     if args.upload:
-        printer('Testing upload speed', quiet,
+        printer('Testando a velocidade de upload', quiet,
                 end=('', '\n')[bool(debug)])
         speedtest.upload(
             callback=callback,
@@ -1971,7 +1971,7 @@ def shell():
                  args.units[0]),
                 quiet)
     else:
-        printer('Skipping upload test', quiet)
+        printer('Ignorando o teste de upload', quiet)
 
     printer('Results:\n%r' % results.dict(), debug=True)
 

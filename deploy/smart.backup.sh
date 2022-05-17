@@ -239,7 +239,7 @@ function_CreateBackupComplete() {
 		mv "${source}"/"${diretorios}"/"${name_backup}"-Completo-"${date_backup}".tar.gz "${destiny}/${today^}/${diretorios}"
 	done <$listdir
 		rm -rf $listdir
-	SizeBackup=$(du -sh "${destiny}" | awk '{print $1}')
+	local SizeBackup=$(du -sh "${destiny}" | awk '{print $1}')
 	EndTime=$(date +%s)
 	CalcTime=$(expr $EndTime - $StartTime)
 	ResultTime=$(expr 10800 + $CalcTime)
@@ -269,7 +269,7 @@ function_CreateBackupIncremental() {
 		mv "${source}"/"${diretorios}"/"${name_backup}"-Incremental-"${date_backup}".tar.gz "${destiny}/${yesterday^}/${diretorios}"
 	done <$listdir
 	rm -rf $listdir
-	SizeBackup=$(du -sh "${destiny}" | awk '{print $1}')
+	local SizeBackup=$(du -sh "${destiny}/${yesterday}" | awk '{print $1}')
 	EndTime=$(date +%s)
 	CalcTime=$(expr $EndTime - $StartTime)
 	ResultTime=$(expr 10800 + $CalcTime)
