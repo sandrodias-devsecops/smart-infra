@@ -24,48 +24,48 @@ StartTime=$(date +%s)
 # TABELA DE CÓDIGOS
 #
 # EFEITO NO TEXTO 
-  Effect-Normal=0    # EFEITO DE NORMAL
-  Effect-Bold=1      # EFEITO DE NEGRITO
-  Effect-Light=2     # EFEITO DE BAIXA INTENSID
-  Effect-Italic=3    # EFEITO DE ITALICO
-  Effect-Underline=4 # EFEITO DE SUBLINHADO
-  Effect-Blink=5     # EFEITO DE PISCANDO
-  Effect-FastBlink=6 # EFEITO DE PISCA RAPIDO
-  Effect-Invert=7    # EFEITO DE INVERSO
-  Effect-Invisible=8 # EFEITO DE INVISIVEL
+  Effect_Normal=0    # EFEITO DE NORMAL
+  Effect_Bold=1      # EFEITO DE NEGRITO
+  Effect_Light=2     # EFEITO DE BAIXA INTENSID
+  Effect_Italic=3    # EFEITO DE ITALICO
+  Effect_Underline=4 # EFEITO DE SUBLINHADO
+  Effect_Blink=5     # EFEITO DE PISCANDO
+  Effect_FastBlink=6 # EFEITO DE PISCA RAPIDO
+  Effect_Invert=7    # EFEITO DE INVERSO
+  Effect_Invisible=8 # EFEITO DE INVISIVEL
 #
 # COR DO TEXTO
-  FG-Black=30   # COR DO TEXTO PRETO
-  FG-Red=31     # COR DO TEXTO VERMELHO
-  FG-Green=32   # COR DO TEXTO VERDE
-  FG-Yellow=33  # COR DO TEXTO AMARELO
-  FG-Blue=34    # COR DO TEXTO AZUL
-  FG-Magenta=35 # COR DO TEXTO MAGENTA
-  FG-Cyan=36    # COR DO TEXTO CIANO
-  FG-White=37   # COR DO TEXTO BRANCO
+  FG_Black=30   # COR DO TEXTO PRETO
+  FG_Red=31     # COR DO TEXTO VERMELHO
+  FG_Green=32   # COR DO TEXTO VERDE
+  FG_Yellow=33  # COR DO TEXTO AMARELO
+  FG_Blue=34    # COR DO TEXTO AZUL
+  FG_Magenta=35 # COR DO TEXTO MAGENTA
+  FG_Cyan=36    # COR DO TEXTO CIANO
+  FG_White=37   # COR DO TEXTO BRANCO
 #
 # COR DO FUNDO
-  BG-Black=40   # COR DO FUNDO PRETO
-  BG-Red=41     # COR DO FUNDO VERMELHO
-  BG-Green=42   # COR DO FUNDO VERDE
-  BG-Yellow=43  # COR DO FUNDO AMARELO
-  BG-Blue=44    # COR DO FUNDO AZUL
-  BG-Magenta=45 # COR DO FUNDO MAGENTA
-  BG-Cyan=46    # COR DO FUNDO CIANO
-  BG-White=47   # COR DO FUNDO BRANCO
+  BG_Black=40   # COR DO FUNDO PRETO
+  BG_Red=41     # COR DO FUNDO VERMELHO
+  BG_Green=42   # COR DO FUNDO VERDE
+  BG_Yellow=43  # COR DO FUNDO AMARELO
+  BG_Blue=44    # COR DO FUNDO AZUL
+  BG_Magenta=45 # COR DO FUNDO MAGENTA
+  BG_Cyan=46    # COR DO FUNDO CIANO
+  BG_White=47   # COR DO FUNDO BRANCO
 #
 # TEMAS PRE DEFINIDOS
-  ALERT-ERROR-Blink-Red-White="\e["${Effect-Blink}";"${FG-Red};"${BG-White}m"
-  ALERT-ERROR-Blink-Black-White="\e["${Effect-Blink}";"${FG-Black};"${BG-White}m"
-  ALERT-ERROR-Blink-White-Red="\e["${Effect-Blink}";"${FG-White};"${BG-Red}m"
-  ALERT-ERROR-Blink-Black-Red="\e["${Effect-Blink}";"${FG-Black};"${BG-Red}m"
-  NOTICE-="\e["${Effect-}";"${FG};"${BG-}m"
-  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
-  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
-  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
-  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
-  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
-  StartCollor="\e["${Effect-}";"${FG};"${BG-}m"
+  ALERT_Blink_Red_White=$(\e[${Effect_Blink};${FG_Red};${BG_White}m)
+  ALERT_Blink_Black_White=(\e[${Effect_Blink};${FG_Black};${BG_White}m)
+  ALERT_Blink_White_Red=$(\e[${Effect_Blink};${FG_White};${BG_Red}m)
+  ALERT_Blink_Black_Red=$(\e[${Effect_Blink};${FG_Black};${BG_Red}m)
+  NOTICE-=$(\e[${Effect_};${FG};${BG_}m)
+  StartCollor=$(\e["${Effect_}";"${FG};"${BG_}m)
+  StartCollor=$(\e["${Effect_}";"${FG};"${BG_}m)
+  StartCollor=$(\e["${Effect_}";"${FG};"${BG_}m)
+  StartCollor=$(\e["${Effect_}";"${FG};"${BG_}m)
+  StartCollor=$(\e["${Effect_}";"${FG};"${BG_}m)
+  StartCollor=$(\e["${Effect_}";"${FG};"${BG_}m)
 
 # ENCERRA FORMATAÇÃO DO TEXTO
 EndCollor="\e[0m"
@@ -222,7 +222,7 @@ function_CreateBackupComplete() {
 	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
-	echo -e "                        ${StartCollor}Criando Backup Completo...${EndCollor}\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
+	echo -e "                        \e[${Effect_Blink};${FG_White};${BG_Blue}mCriando Backup Completo...${EndCollor}\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
 	today=$(date '+%A')	
 	date_backup=$(date +-%d%h%y)
 	while IFS= read -r diretorios || [ -n "${diretorios}" ]; do
@@ -235,7 +235,7 @@ function_CreateBackupComplete() {
 			) 
 		rm -rf pwd.txt
 		cd "${source}/${diretorios}"
-		find *.* -type f -print0 | xargs -0 tar -czf "${source}"/"${diretorios}"/"${name_backup}"-Completo-"${date_backup}".tar.gz --no-recursion
+		find *.* -type f -print0 | xargs -0 tar -czf "${source}"/"${diretorios}"/"${name_backup}"-Completo-"${date_backup}".tar.gz --no-recursion 
 		mv "${source}"/"${diretorios}"/"${name_backup}"-Completo-"${date_backup}".tar.gz "${destiny}/${today^}/${diretorios}"
 	done <$listdir
 		rm -rf $listdir
@@ -252,7 +252,7 @@ function_CreateBackupIncremental() {
 	echo -e "                 PREPARAÇÃO DO DIRETÓRIO DE DESTINO DO BACKUP"
 	echo -e "     +-----------------------------------------------------------------+"
 	sleep 0.1
-	echo -e "                      ${StartCollor}Criando Backup Incremental...${EndCollor}\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
+	echo -e "                      "${ALERT_Blink_Black_White}"Criando Backup Incremental...${EndCollor}\n      Diretório de Origem  : "${source}"\n      Diretório de Destino : "${destiny}"\n      Diretório Excluído   : "${exclude:=Omitido}""
 	yesterday=$( date '+%A' -d '-1 day' )
 	date_backup=$(date +-%d%h%y)
 	while IFS= read -r diretorios || [ -n "$diretorios" ]; do
@@ -269,7 +269,7 @@ function_CreateBackupIncremental() {
 		mv "${source}"/"${diretorios}"/"${name_backup}"-Incremental-"${date_backup}".tar.gz "${destiny}/${yesterday^}/${diretorios}"
 	done <$listdir
 	rm -rf $listdir
-	local SizeBackup=$(du -sh "${destiny}/${yesterday}" | awk '{print $1}')
+	local SizeBackup=$(du -sh "${destiny}/${yesterday^}" | awk '{print $1}')
 	EndTime=$(date +%s)
 	CalcTime=$(expr $EndTime - $StartTime)
 	ResultTime=$(expr 10800 + $CalcTime)
@@ -308,8 +308,8 @@ function_CheckSpace
 function_CheckBackupOLD
 function_CreateListDestiny
 if [ ! $Incremental -eq 1 ]; then
-	function_CreateBackupComplete 2>/dev/null
+	function_CreateBackupComplete  2>/dev/null 
 else
-	function_CreateBackupIncremental 2>/dev/null
+	function_CreateBackupIncremental  2>/dev/null 
 fi
 #function_SendEmail | sed 's/^/\ \ \ \ \ /g'
